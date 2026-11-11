@@ -1,0 +1,37 @@
+# Politique de données et de preuves / Data evidence policy
+
+## Français
+
+Il faut distinguer quatre niveaux de certitude :
+
+1. **Existence** : l'entrée figure dans une table statique publiée. Cela ne prouve pas son accessibilité dans le jeu.
+2. **Effet** : une connaissance et ses statistiques sont rapprochées grâce à `secondary_knowledge_id`. Quand `is_pct=true`, une valeur `0.02` s'affiche `2 %`. Ne pas déduire l'empilement des bonus de la seule table.
+3. **Méthode d'obtention identifiée** : lien détecté dans les tables de quêtes, récompenses, échanges voyageur ou fabrication. Les prérequis peuvent être incomplets, et l'entrée peut être désactivée.
+4. **Disponible dans BitCraft 1.0** : vérifié dans le nouveau monde ou confirmé officiellement. Les données pré-lancement seules ne suffisent pas.
+
+**Règle impérative :** ne jamais inventer un taux de drop, un monstre, un lieu, une durée, une quête, un marchand ou une méthode d'obtention à partir du nom d'une entrée. Les cases « À documenter » restent explicites jusqu'à vérification.
+
+Les catégories et le classement d'« impact » sont des **heuristiques de repérage**, non une estimation de DPS ou une recommandation d'optimisation démontrée. Les noms de capacités techniques sont des identifiants en attente d'analyse. Les niveaux automatiques sont présentés séparément des connaissances cachées.
+
+Priorités d'audit : buffs permanents, mobilité, transport, téléportation, endurance, puissance et vitesse des métiers, capacités spéciales, maîtrise de cuisine, entraînement des animaux et pièces d'équipement exceptionnelles non fabriquées.
+
+## English
+
+Keep these claims distinct:
+
+1. **In static data** does not prove current game availability.
+2. **Stat effect** is derived from `knowledge_stat_modifier_desc` joined by `secondary_knowledge_id`; raw fractions with `is_pct` are displayed as percentages. Actual stacking is not inferred.
+3. **Acquisition relation** is a trace in quest rewards, trade offers, tasks, or crafting. It does **not** prove current availability or complete prerequisites.
+4. **Obtainable in the 1.0 world** requires in-world checking after release or reliable official confirmation.
+
+Never invent drop rates, boss names, locations, quests, requirements or event dates from an item name. Impact tags are discovery heuristics, not validated optimization or DPS rankings. Automatic skill-level rewards must not drown out hidden unlocks.
+
+## Public references
+
+- https://github.com/BitCraftToolBox/BitCraft_GameData/tree/cereal/cs/static
+- https://brico.app/database
+- https://bitcraftonline.com/news
+
+## Data update policy
+
+Re-check public source revisions and all high-impact changes. Preserve stable user progress keys (`K:item_id`, `C:collectible_id`, `S:secondary_knowledge_id`, `L:skill_level_knowledge_desc.id`) so personal checkmarks survive updates. Future entries should carry independent verification date, source revision and availability status.
