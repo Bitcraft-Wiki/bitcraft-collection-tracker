@@ -1,0 +1,26 @@
+name: Static tracker checks
+on:
+  push:
+  pull_request:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate embedded JavaScript and essential UI contracts
+        shell: bash
+        run: |
+          node <<'JS'
+          const fs=require('node:fs'), vm=require('node:vm');
+          const h=fs.readFileSync('index.html','utf8');
+          const js=h.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+          if(!js)throw Error('Missing app script');
+          new vm.Script(js);
+          for(const token of ['id="impact"','id="confidence"','id="focusStat"','function makeCatalog(d)','knowledge_stat_modifier_desc','function hasProof(r)','localStorage','safe(row.method']) {
+            if(!h.includes(token)) throw Error('Missing contract '+token);
+          }
+          console.log('Static tracker checks passed');
+          JS
