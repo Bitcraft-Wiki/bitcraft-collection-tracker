@@ -11,7 +11,7 @@ Il faut distinguer quatre niveaux de certitude :
 
 **Règle impérative :** ne jamais inventer un taux de drop, un monstre, un lieu, une durée, une quête, un marchand ou une méthode d'obtention à partir du nom d'une entrée. Les cases « À documenter » restent explicites jusqu'à vérification.
 
-Les catégories et le classement d'« impact » sont des **heuristiques de repérage**, non une estimation de DPS ou une recommandation d'optimisation démontrée. Les noms de capacités techniques sont des identifiants en attente d'analyse. Les niveaux automatiques sont présentés séparément des connaissances cachées.
+Les catégories et le classement d'« impact » sont des **heuristiques de repérage**, non une estimation de DPS ou une recommandation d'optimisation démontrée. Les noms de capacités techniques sont des identifiants en attente d'analyse. Les récompenses automatiques des niveaux de métier sont exclues de toutes les vues et des exports. Les achats, quêtes et fabrications exigeant un niveau sont conservés car leur acquisition n'est pas automatique.
 
 Priorités d'audit : buffs permanents, mobilité, transport, téléportation, endurance, puissance et vitesse des métiers, capacités spéciales, maîtrise de cuisine, entraînement des animaux et pièces d'équipement exceptionnelles non fabriquées.
 
@@ -38,7 +38,7 @@ Keep these claims distinct:
 3. **Acquisition relation** is a trace in quest rewards, trade offers, tasks, or crafting. It does **not** prove current availability or complete prerequisites.
 4. **Obtainable in the 1.0 world** requires in-world checking after release or reliable official confirmation.
 
-Never invent drop rates, boss names, locations, quests, requirements or event dates from an item name. Impact tags are discovery heuristics, not validated optimization or DPS rankings. Automatic skill-level rewards must not drown out hidden unlocks.
+Never invent drop rates, boss names, locations, quests, requirements or event dates from an item name. Impact tags are discovery heuristics, not validated optimization or DPS rankings. Automatic skill-level rewards are excluded from all catalog tabs and exports. Scrolls or quests gated by a profession level remain in scope because leveling alone does not grant them.
 
 
 ## Gameplay guide tranche — November 12, 2026
@@ -57,4 +57,9 @@ The app now preserves **multiple acquisition traces** (quest, traveler trade, ta
 
 ## Data update policy
 
-Re-check public source revisions and all high-impact changes. Preserve stable user progress keys (`K:item_id`, `C:collectible_id`, `S:secondary_knowledge_id`, `L:skill_level_knowledge_desc.id`) so personal checkmarks survive updates. Future entries should carry independent verification date, source revision and availability status.
+Re-check public source revisions and all high-impact changes. Preserve stable user progress keys (`K:item_id`, `C:collectible_id`, `S:secondary_knowledge_id`; legacy `L:*` saved values can remain in backups but are never displayed or counted) so personal checkmarks survive updates. Future entries should carry independent verification date, source revision and availability status.
+
+
+## Brico.app cross-check — 12 November 2026 / rapprochement Brico — 12 novembre 2026
+
+The tracker now opens per-item Brico pages as acquisition references and separate knowledge pages for statistical effects. Detected trader, quest and traveler task routes link to their corresponding Brico pages. All routes retain their BitCraftToolBox raw-table links. **Generated Brico links follow inspected URL patterns but have not all been checked individually**; check the page and current game availability before treating an acquisition as confirmed. Brico is a community database, not an official source. See [BRICO_AUDIT.md](BRICO_AUDIT.md) for manually inspected examples.
