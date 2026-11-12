@@ -14,7 +14,8 @@ Chaque fiche indique, si les données existent : **effet**, **méthode d’obten
 ### Fonctionnalités
 
 - Bonus de statistiques calculés à partir des connaissances et des modificateurs publiés.
-- Croisement automatisé avec quêtes, récompenses de tâches, échanges de voyageurs et fabrication.
+- Croisement automatisé avec quêtes, récompenses de tâches, échanges de voyageurs et fabrication, **avec toutes les voies repérées et leurs références de table**.
+- Guides officiels d'obtention pour les connaissances de pêche exceptionnelles et certains accessoires spécialisés, et signalement des **anciennes sources événementielles** sans preuve d'accessibilité actuelle.
 - Filtres de catégorie, impact, rareté, obtention, statut et preuve ; recherche et tri par impact.
 - Progression personnelle par monde **1.0 / EA2** : manquant, cible, obtenu, lié au compte, ignorer.
 - Notes personnelles, export CSV, sauvegarde et import JSON. Stockage local dans le navigateur.
@@ -53,6 +54,7 @@ Players can track their progress per 1.0/EA2 world, set targets and priorities, 
 ## Roadmap / Suite
 
 - [x] Gameplay-first cards, filters, stat-modifier links, acquisitions and local tracking
+- [x] Official fishing knowledge unlock guidance; source-linked acquisition alternatives; specialist crafted accessories preserved
 - [x] Separate automatic skill-level progression from hidden unlocks
 - [ ] Verify in-world acquisition conditions and availability after the 1.0 release
 - [ ] Complete FR/EN parity of all detailed item descriptions and methods
