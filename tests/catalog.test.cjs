@@ -388,6 +388,8 @@ for(const id of [91005,91006,91007,91008,91009,91011]){
 }
 assert(!cosmeticRecords.some(r=>r.key==='I:81001'),'Premium deed cannot leak as standalone cosmetic item');
 assert(!cosmeticRecords.some(r=>r.key==='I:81002'),'Disabled premium deed cannot leak');
+assert(!cosmeticRecords.some(r=>r.key==='I:81005'),'The First Steps Jacket deed must not be a second collectible entry');
+assert(!cosmeticRecords.some(r=>r.key==='I:81011'),'A collectible pet deed must not duplicate the pet tracking entry');
 const jacket=cc(91005);
 assert.equal(jacket.methodType,'Récompense de quête');
 assert.match(jacket.requirements,/Cooking niv\. 2/);
