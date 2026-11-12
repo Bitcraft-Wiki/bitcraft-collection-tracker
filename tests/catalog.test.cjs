@@ -45,7 +45,7 @@ const data = {
     {id:903,name:'Basic Cloth Chestplate',tag:'Armor'},
     {id:904,name:'Special Fishing Bobber',tag:'Fishing Instrument'},
   ],
-  equipment_desc:[{item_id:901},{item_id:902},{item_id:903},{item_id:904}],
+  equipment_desc:[{item_id:901,stats:[{id:'Forestry Speed',value:0.05,is_pct:true}],level_requirement:{skill_id:2,level:12},required_knowledges:[666]},{item_id:902},{item_id:903},{item_id:904}],
   weapon_desc:[{item_id:902}],
   tool_desc:[],
   crafting_recipe_desc:[
@@ -56,11 +56,13 @@ const data = {
   quest_chain_desc:[{id:11,name:'Researcher Quest',rewards:[{ItemStack_:{item_id:50003,quantity:1}}],requirements:[]}],
   traveler_trade_order_desc:[{id:31,traveler:'Heimlich',offer_items:[{item_id:50003,quantity:1}],required_items:[{item_id:1,quantity:100}],required_knowledges:[],blocking_knowledges:[],achievement_requirements:[],level_requirements:[]}],
   stage_rewards_desc:[],achievement_desc:[],premium_item_desc:[],traveler_task_desc:[],
-  skill_level_knowledge_desc:[],skill_desc:[],collectible_desc:[],ability_unlock_desc:[]
+  skill_level_knowledge_desc:[],skill_desc:[{id:2,name:'Forestry'}],collectible_desc:[],ability_unlock_desc:[]
 };
 const result = makeCatalog(data).records;
 const byKey = id => result.find(x => x.key===id);
 assert.ok(byKey('I:901'),'Craftable, useful accessory should be included');
+assert.match(byKey('I:901').effect,/Forestry Speed \+5 %/);
+assert.match(byKey('I:901').requirements,/Forestry niveau 12/);
 assert.ok(byKey('I:904'),'Uncrafted bobber should be included');
 assert.equal(byKey('I:902'),undefined,'Crafted weapon must be excluded');
 assert.equal(byKey('I:903'),undefined,'Crafted armor must be excluded');
