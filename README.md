@@ -21,6 +21,7 @@ Chaque fiche indique, si les données existent : **effet**, **méthode d’obten
 - Progression personnelle par monde **1.0 / EA2** : manquant, cible, obtenu, lié au compte, ignorer.
 - Notes personnelles, export CSV, sauvegarde et import JSON. Stockage local dans le navigateur.
 - Exclusion par défaut des **outils principaux, armes et armures fabriqués**, des connaissances de départ et des données de test.
+- **Objets en Astralite exclus du catalogue** : noms d’objets et objets de collection dont l’acte associé est en Astralite. Les connaissances qui parlent de ce matériau restent visibles, tout comme les objets indépendants qui le mentionnent seulement dans leur description.
 - Interface en français / anglais ; les intitulés du jeu et certaines notes d’obtention restent actuellement dans la langue source ou en français.
 
 ### Attention aux preuves
@@ -43,6 +44,8 @@ For each unlock the app provides a known effect, any **traced acquisition source
 
 **Automatically granted profession-level unlocks are omitted entirely**, while scrolls, quests, purchases and other unlocks that merely require a profession level stay visible. Brico.app deep links connect each supported source to item, knowledge, quest, trade or task details.
 
+**Astralite-named objects are excluded** across the catalog, including collectibles with Astralite-named deeds. Knowledge about Astralite and unrelated items mentioning it only in a description remain visible. Existing user progress keys are not deleted.
+
 Players can track their progress per 1.0/EA2 world, set targets and priorities, attach local notes and export CSV/JSON. Ordinary craftable main profession tools, weapons and armor are excluded by default. Cosmetic collectibles remain searchable in a separate view.
 
 **Important:** a record in the static tables is not proof the unlock can be acquired in the 1.0 launch world. A traced path is not live availability confirmation. The interface is bilingual, but detailed acquisition strings are not yet fully translated.
@@ -61,6 +64,8 @@ Players can track their progress per 1.0/EA2 world, set targets and priorities, 
 - [x] Official fishing knowledge unlock guidance; source-linked acquisition alternatives; specialist crafted accessories preserved
 - [x] Remove automatic profession-level unlocks from the entire catalogue; keep level-gated acquired knowledge
 - [x] Add Brico.app deep links and a first reviewed acquisition-source sample
+- [x] Exclude Astralite-made objects without hiding unrelated unlocks or deleting saved progress
+- [x] Resolve prerequisite quest names in acquisition guides; add Araknir's Slayer quest
 - [ ] Verify in-world acquisition conditions and availability after the 1.0 release
 - [ ] Complete FR/EN parity of all detailed item descriptions and methods
 - [ ] Audit hidden permanent bonuses, gameplay improvements and noncraftable gear

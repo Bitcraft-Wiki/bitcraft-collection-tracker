@@ -12,10 +12,10 @@ new vm.Script(script);
 const bootAt = script.indexOf(" $('tbody').addEventListener('change'");
 assert.ok(bootAt > 0, 'App startup boundary should be located');
 const isolated = script.slice(0, bootAt) +
-  "\n globalThis.__catalogTest={makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,hasProof};\n})();";
+  "\n globalThis.__catalogTest={makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,hasProof,isAstraliteObjectName};\n})();";
 const context = {console};
 vm.runInNewContext(isolated, context, {timeout: 3000});
-const {makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,hasProof} = context.__catalogTest;
+const {makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,hasProof,isAstraliteObjectName} = context.__catalogTest;
 
 const fishing = officialKnowledgeHint({title:'Tier 3 Trophy Fishing Knowledge'});
 const rarity = officialKnowledgeHint({title:'Tier 7 One That Got Away Knowledge'});
@@ -122,3 +122,70 @@ assert.match(araknir.method,/ne sont pas confirmés/,'Unverified drop circumstan
 assert.match(araknir.effect,/Force \+20/);
 assert.ok(html.includes("const CACHE='bitcraft-tracker-v1.0.2026-11'"),'Existing user progress key must remain unchanged');
 console.log('PASS: automatic level exclusions, nonautomatic purchases, deep Brico sources and evidence qualification');
+
+
+// Material exclusion must be specific to actual item names (not descriptions or lore).
+assert.equal(isAstraliteObjectName('Astralite Duelist Helm'),true);
+assert.equal(isAstraliteObjectName('Ancient astralite-Pendant'),true);
+assert.equal(isAstraliteObjectName('Astraliteish Fragment'),false);
+assert.equal(isAstraliteObjectName('Silver Trinket'),false);
+
+const astraliteFixtures={
+ ...data,
+ item_desc:[
+  ...data.item_desc,
+  {id:303001,name:'Astralite Duelist Helm',tag:'Metal Armor',rarity:'Mythic'},
+  {id:303002,name:'Astralite Pendant',tag:'Trinket',rarity:'Epic'},
+  {id:303003,name:'Sunstone Charm',tag:'Charm',description:'A stone found near Astralite'},
+  {id:303004,name:'Astralite Memento',tag:'Quest Item'},
+  {id:303005,name:'Forest Owl',tag:'Pet'}
+ ],
+ collectible_desc:[
+  {id:404001,name:'Astralite Duelist Helm',item_deed_id:303001,collectible_type:'Clothes',locked:true},
+  {id:404002,name:'Traveler Reward',item_deed_id:303002,collectible_type:'Artifact'},
+  {id:404003,name:'Forest Owl',item_deed_id:303005,collectible_type:'Pet'}
+ ],
+ knowledge_scroll_desc:[
+  ...data.knowledge_scroll_desc,
+  {item_id:505001,title:'Astralite Construction Knowledge',tag:'Construction',secondary_knowledge_id:505002,known_by_default:false,auto_collect:false}
+ ],
+ secondary_knowledge_desc:[...data.secondary_knowledge_desc,{id:505002,name:'Astralite Construction Knowledge'}],
+ special_unused:undefined
+};
+const materialRecords=makeCatalog(astraliteFixtures).records;
+const hasKey=key=>materialRecords.some(x=>x.key===key);
+assert(!hasKey('C:404001'),'Astralite-named collectible removed');
+assert(!hasKey('C:404002'),'Astralite deed also excludes linked generic collectible');
+assert(hasKey('C:404003'),'Non-Astralite collectible preserved');
+assert(!hasKey('I:303002'),'Astralite functional accessory removed even when usually retained');
+assert(!hasKey('I:303004'),'Astralite special noncraftable item removed');
+assert(hasKey('I:303003'),'Astralite mention only in DESCRIPTION must not hide unrelated item');
+assert(hasKey('K:505001'),'Knowledge ABOUT Astralite is not an Astralite-made object');
+assert(html.includes("!isAstraliteObjectName(r.name)).map("),'Previously manually-added Astralite objects are hidden without deleting saved user data');
+assert(html.includes("const CACHE='bitcraft-tracker-v1.0.2026-11'"),'Local save key retained');
+console.log('PASS: Astralite object exclusions and preservation of unrelated unlocks');
+
+const questFixture={
+ ...data,
+ skill_desc:[...data.skill_desc,{id:18,name:'Slayer'}],
+ item_desc:[...data.item_desc,{id:1682820391,name:'Unlock Araknir Slayer Tasks',tag:'Knowledge'}],
+ knowledge_scroll_desc:[...data.knowledge_scroll_desc,{item_id:1682820391,secondary_knowledge_id:225309754,title:'Unlock Araknir Tasks',tag:'Slayer',known_by_default:false,auto_collect:true}],
+ secondary_knowledge_desc:[...data.secondary_knowledge_desc,{id:225309754,name:'Araknir - Slayer Tasks'}],
+ quest_chain_desc:[...data.quest_chain_desc,
+  {id:2109433461,name:'Taking Down the Sentinel',requirements:[],rewards:[],implicit_rewards:[]},
+  {id:809605965,name:'Pest Control',
+   requirements:[{QuestChain_:2109433461},{QuestChain_:2109433461},{Level_:{skill_id:18,level:70}}],
+   rewards:[{ItemStack_:{item_id:1682820391,quantity:1}}],
+   implicit_rewards:[]}
+ ]
+};
+const araknirSlayer=makeCatalog(questFixture).records.find(x=>x.key==='K:1682820391');
+assert(araknirSlayer,'Araknir Slayer unlock retained');
+assert.equal(araknirSlayer.methodType,'Récompense de quête');
+assert.match(araknirSlayer.method,/Pest Control/);
+assert.match(araknirSlayer.requirements,/Taking Down the Sentinel/);
+assert.equal((araknirSlayer.requirements.match(/Taking Down the Sentinel/g)||[]).length,1,'Repeated prerequisites are deduplicated');
+assert.match(araknirSlayer.requirements,/Slayer niv\. 70/);
+assert(araknirSlayer.sources.some(x=>x.bricoUrl==='https://brico.app/database/quest-chain/809605965'));
+assert.match(araknirSlayer.guidance,/destruction du nid/);
+console.log('PASS: readable prerequisite quest names, deduplication and Araknir quest guide');
