@@ -12,10 +12,10 @@ new vm.Script(script);
 const bootAt = script.indexOf(" $('tbody').addEventListener('change'");
 assert.ok(bootAt > 0, 'App startup boundary should be located');
 const isolated = script.slice(0, bootAt) +
-  "\n globalThis.__catalogTest={makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,hasProof,isAstraliteObjectName};\n})();";
+  "\n globalThis.__catalogTest={makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,hasProof,isAstraliteObjectName,isExcludedAstraliteRecord};\n})();";
 const context = {console};
 vm.runInNewContext(isolated, context, {timeout: 3000});
-const {makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,hasProof,isAstraliteObjectName} = context.__catalogTest;
+const {makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,hasProof,isAstraliteObjectName,isExcludedAstraliteRecord} = context.__catalogTest;
 
 const fishing = officialKnowledgeHint({title:'Tier 3 Trophy Fishing Knowledge'});
 const rarity = officialKnowledgeHint({title:'Tier 7 One That Got Away Knowledge'});
@@ -189,3 +189,36 @@ assert.match(araknirSlayer.requirements,/Slayer niv\. 70/);
 assert(araknirSlayer.sources.some(x=>x.bricoUrl==='https://brico.app/database/quest-chain/809605965'));
 assert.match(araknirSlayer.guidance,/destruction du nid/);
 console.log('PASS: readable prerequisite quest names, deduplication and Araknir quest guide');
+
+
+// Regression for exact screenshot: Astralite Axe and Bow appeared in the catalogue after PR #4.
+// Test the real displayed names AND identifiers as uncrafted equipment records.
+// Exclusion must hold even when these records would otherwise pass equipment filters.
+const screenshotAxeIds=[76019200,445668153,698704517,863928001,1666431616,1674000473];
+const screenshotBowIds=[1013839268,1709953729];
+const screenshotIds=[...screenshotAxeIds,...screenshotBowIds];
+const screenshotData={
+ ...data,
+ item_desc:[...data.item_desc,
+   ...screenshotAxeIds.map(id=>({id,name:'Astralite Axe',tag:'Tool',rarity:'Mythic',tier:10})),
+   ...screenshotBowIds.map(id=>({id,name:'Astralite Bow',tag:'Weapon',rarity:'Mythic',tier:10})),
+   {id:2026121,name:'Birch Axe',tag:'Tool',rarity:'Rare',tier:2},
+   {id:2026122,name:'Wooden Bow',tag:'Weapon',rarity:'Rare',tier:2}],
+ equipment_desc:[...data.equipment_desc,...screenshotIds.map(item_id=>({item_id,stats:[],level_requirement:{skill_id:2,level:100}})),
+   {item_id:2026121},{item_id:2026122}],
+ weapon_desc:[...data.weapon_desc,...screenshotBowIds.map(item_id=>({item_id})),{item_id:2026122}],
+};
+const screenshotCatalog=makeCatalog(screenshotData).records;
+for(const id of screenshotIds)assert(!screenshotCatalog.some(row=>row.key==='I:'+id),'Astralite screenshot item '+id+' must never enter the catalogue');
+assert(screenshotCatalog.some(row=>row.key==='I:2026121'),'Non-Astralite Axe should not be filtered');
+assert(screenshotCatalog.some(row=>row.key==='I:2026122'),'Non-Astralite Bow should not be filtered');
+assert(isExcludedAstraliteRecord({kind:'item',name:'Astralite Axe'}));
+assert(isExcludedAstraliteRecord({kind:'collectible',name:'Astralite Bow'}));
+assert(!isExcludedAstraliteRecord({kind:'knowledge',name:'Astralite Construction Knowledge'}));
+assert(!isExcludedAstraliteRecord({kind:'item',name:'Birch Axe',description:'Astralite is nearby'}));
+assert(html.includes("id=\"buildInfo\""),'Build marker must let the user distinguish old cache from new app');
+assert(html.includes('UI v2026.11.12-r5'),'Build version should match reviewed release');
+assert(html.includes('return {records:result.filter(row=>!isExcludedAstraliteRecord(row))'),'Final catalogue filter must be applied');
+assert(html.includes('const a=records.filter(x=>{if(isExcludedAstraliteRecord(x))return false;'),'Search and CSV views must independently filter Astralite');
+assert(html.includes('function activeItems(){return records.filter(x=>!isExcludedAstraliteRecord(x)'),'Counters must ignore Astralite');
+console.log('PASS: 8 exact Astralite Axe/Bow screenshot IDs blocked, non-Astralite controls preserved, build stamp and display guards');
