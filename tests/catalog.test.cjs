@@ -12,10 +12,10 @@ new vm.Script(script);
 const bootAt = script.indexOf(" $('tbody').addEventListener('change'");
 assert.ok(bootAt > 0, 'App startup boundary should be located');
 const isolated = script.slice(0, bootAt) +
-  "\n globalThis.__catalogTest={makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,isSpecialEquipment,isConventionalGearFallback,hasProof,isAstraliteObjectName,isExcludedAstraliteRecord};\n})();";
+  "\n globalThis.__catalogTest={makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,isSpecialEquipment,isConventionalGearFallback,hasProof,isAstraliteObjectName,isExcludedAstraliteRecord,isExternalRewardRecord,isInScopeRecord,isInGameAcquisition,isAutomaticCareerAchievement};\n})();";
 const context = {console};
 vm.runInNewContext(isolated, context, {timeout: 3000});
-const {makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,isSpecialEquipment,isConventionalGearFallback,hasProof,isAstraliteObjectName,isExcludedAstraliteRecord} = context.__catalogTest;
+const {makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,isSpecialEquipment,isConventionalGearFallback,hasProof,isAstraliteObjectName,isExcludedAstraliteRecord,isExternalRewardRecord,isInScopeRecord,isInGameAcquisition,isAutomaticCareerAchievement} = context.__catalogTest;
 
 const fishing = officialKnowledgeHint({title:'Tier 3 Trophy Fishing Knowledge'});
 const rarity = officialKnowledgeHint({title:'Tier 7 One That Got Away Knowledge'});
@@ -72,8 +72,8 @@ assert.equal(byKey('K:50002').methodType,'Historique');
 assert.equal(hasProof(byKey('K:50002')),false);
 const multi=byKey('K:50003');
 assert.equal(multi.sources.length,2,'All acquisition methods should be preserved');
-assert.equal(multi.sources[0].reference,'trade 31');
-assert.equal(multi.sources[1].reference,'quest 11');
+assert.equal(multi.sources[0].reference,'quest 11');
+assert.equal(multi.sources[1].reference,'trade 31');
 assert.match(byKey('I:901').method,/Sentinel/);
 assert.match(byKey('I:904').method,/filets de pêche/);
 console.log('PASS: official hints, historical uncertainty, gear exclusions, stat effects and route provenance');
@@ -150,13 +150,14 @@ const astraliteFixtures={
   {item_id:505001,title:'Astralite Construction Knowledge',tag:'Construction',secondary_knowledge_id:505002,known_by_default:false,auto_collect:false}
  ],
  secondary_knowledge_desc:[...data.secondary_knowledge_desc,{id:505002,name:'Astralite Construction Knowledge'}],
+ quest_chain_desc:[...data.quest_chain_desc,{id:40410003,name:'Finding the Forest Owl',requirements:[],rewards:[{ItemStack_:{item_id:303005,quantity:1}}],implicit_rewards:[]}],
  special_unused:undefined
 };
 const materialRecords=makeCatalog(astraliteFixtures).records;
 const hasKey=key=>materialRecords.some(x=>x.key===key);
 assert(!hasKey('C:404001'),'Astralite-named collectible removed');
 assert(!hasKey('C:404002'),'Astralite deed also excludes linked generic collectible');
-assert(hasKey('C:404003'),'Non-Astralite collectible preserved');
+assert(hasKey('C:404003'),'In-game Forest Owl preserved despite Astralite exclusions');
 assert(!hasKey('I:303002'),'Astralite functional accessory removed even when usually retained');
 assert(!hasKey('I:303004'),'Astralite special noncraftable item removed');
 assert(hasKey('I:303003'),'Astralite mention only in DESCRIPTION must not hide unrelated item');
@@ -217,10 +218,10 @@ assert(isExcludedAstraliteRecord({kind:'collectible',name:'Astralite Bow'}));
 assert(!isExcludedAstraliteRecord({kind:'knowledge',name:'Astralite Construction Knowledge'}));
 assert(!isExcludedAstraliteRecord({kind:'item',name:'Birch Axe',description:'Astralite is nearby'}));
 assert(html.includes("id=\"buildInfo\""),'Build marker must let the user distinguish old cache from new app');
-assert(html.includes('UI v2026.11.12-r6'),'Build version should match reviewed release');
-assert(html.includes('return {records:result.filter(row=>!isExcludedAstraliteRecord(row))'),'Final catalogue filter must be applied');
-assert(html.includes('const a=records.filter(x=>{if(isExcludedAstraliteRecord(x))return false;'),'Search and CSV views must independently filter Astralite');
-assert(html.includes('function activeItems(){return records.filter(x=>!isExcludedAstraliteRecord(x)'),'Counters must ignore Astralite');
+assert(html.includes('UI v2026.11.12-r7'),'Build version should match reviewed release');
+assert(html.includes('return {records:result.filter(isInScopeRecord)'),'Final catalogue scope guard must be applied');
+assert(html.includes('const a=records.filter(x=>{if(!isInScopeRecord(x))return false;'),'Search and CSV views must exclude premium and Twitch rewards');
+assert(html.includes('function activeItems(){return records.filter(x=>isInScopeRecord(x)'),'Counters must exclude external rewards');
 console.log('PASS: 8 exact Astralite Axe/Bow screenshot IDs blocked, non-Astralite controls preserved, build stamp and display guards');
 
 
@@ -312,16 +313,17 @@ const clothingFixture={
   ...data.item_desc,
   {id:57100001,name:'Aurumite Plated Pants',tag:'Cosmetic Clothes'},
   {id:57100002,name:'Celestium Chestplate',tag:'Metal Armor'},
-  {id:57100003,name:'Awakened Wolf Boots',tag:'Cosmetic Clothes'}
+  {id:57100003,name:'Festival Petal Cloak',tag:'Cosmetic Clothes'}
  ],
  collectible_desc:[
   {id:57110001,name:'Aurumite Plated Pants (Mythic)',collectible_type:'Clothes',item_deed_id:57100001,locked:true},
   {id:57110002,name:'Special Outfit',collectible_type:'Clothes',item_deed_id:57100002,locked:true},
-  {id:57110003,name:'Awakened Wolf Boots',collectible_type:'Clothes',item_deed_id:57100003,locked:true}
+  {id:57110003,name:'Festival Petal Cloak',collectible_type:'Clothes',item_deed_id:57100003,locked:true}
  ]
 };
+clothingFixture.quest_chain_desc=[...data.quest_chain_desc,{id:57110031,name:'A Festival Gift',requirements:[],rewards:[{ItemStack_:{item_id:57100003,quantity:1}}],implicit_rewards:[]}];
 const apparel=makeCatalog(clothingFixture).records;
 assert(!apparel.some(r=>r.key==='C:57110001'),'Normal material armor/cosmetic variant excluded across rarity labels');
 assert(!apparel.some(r=>r.key==='C:57110002'),'Generic collectible deed linked to conventional chestplate excluded');
-assert(apparel.some(r=>r.key==='C:57110003'),'Special event cosmetic must remain accessible');
+assert(apparel.some(r=>r.key==='C:57110003'),'Special event cosmetic with a verified game quest remains accessible');
 console.log('PASS: ordinary material armor collectible deeds excluded without losing special cosmetic collections');
