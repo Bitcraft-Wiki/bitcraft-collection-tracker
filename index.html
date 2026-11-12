@@ -207,7 +207,9 @@ main{padding:25px 0 60px}.ribbon{border:1px solid #796c49;background:#2a281e;bor
      add('Récompense de quête','Récompense définie pour la quête : '+q.name,q.requirements,'quest_chain_desc','quest '+q.id);
    }
    for(const t of (taskMap.get(Number(itemId))||[]).slice(0,5)){
-     const lv=t.level_requirement;const req=lv?.min_level?`${skillMap.get(Number(lv.skill_id))||'Métier '+lv.skill_id} niveau ${lv.min_level} minimum`:'';
+     const lv=t.level_requirement;const level=lv?.min_level?`${skillMap.get(Number(lv.skill_id))||'Métier '+lv.skill_id} niveau ${lv.min_level} minimum`:'';
+     const items=list(t.required_items).map(x=>`${x.quantity||1} × ${itemMap.get(Number(x.item_id))?.name||'objet #'+x.item_id}`).join(' + ');
+     const req=[level,items?'Livrer : '+items:''].filter(Boolean).join(' · ');
      add('Tâche de voyageur','Récompense définie pour une tâche de voyageur : '+(t.description||'tâche #'+t.id),req,'traveler_task_desc','task '+t.id);
    }
    for(const r of (craftMap.get(Number(itemId))||[]).slice(0,3)){
