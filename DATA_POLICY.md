@@ -63,3 +63,16 @@ Re-check public source revisions and all high-impact changes. Preserve stable us
 ## Brico.app cross-check — 12 November 2026 / rapprochement Brico — 12 novembre 2026
 
 The tracker now opens per-item Brico pages as acquisition references and separate knowledge pages for statistical effects. Detected trader, quest and traveler task routes link to their corresponding Brico pages. All routes retain their BitCraftToolBox raw-table links. **Generated Brico links follow inspected URL patterns but have not all been checked individually**; check the page and current game availability before treating an acquisition as confirmed. Brico is a community database, not an official source. See [BRICO_AUDIT.md](BRICO_AUDIT.md) for manually inspected examples.
+
+
+## Exclusion ciblée Astralite / Targeted Astralite exclusion — 12 novembre / November 12, 2026
+
+**FR :** les objets dont le **nom** contient le terme distinct « Astralite », ainsi que les objets de collection reliés à un acte de ce matériau, sont exclus du catalogue, des recherches, compteurs et exports CSV. Leurs identifiants et anciennes coches restent intacts dans les sauvegardes JSON et le stockage local afin d'éviter une perte d'historique. Les **connaissances** qui mentionnent ce matériau, ou les objets qui n’en parlent que dans leur description, ne sont pas exclus par ce critère. Les entrées manuelles nommées Astralite sont masquées, mais non effacées.
+
+**EN:** Objects with the standalone word “Astralite” in their names, plus collectible records linked to Astralite-named deeds, are excluded from catalog views, searches, counters and CSV exports. Existing stored checkmarks remain untouched in JSON backups and local storage. Knowledge about Astralite and unrelated items mentioning it only in their description are not removed. Manually added Astralite-named entries are hidden, not deleted.
+
+**Provenance / Evidence:** [Astralite Machete](https://brico.app/database/item/337140750) and [Astralite Duelist Helm](https://brico.app/database/item/943322087) demonstrate the material in gear naming. The filter is based on explicit names, not automatic classification of recipe ingredients.
+
+### Quêtes lisibles / Readable prerequisites
+
+Prerequisite quest IDs are resolved against `quest_chain_desc` to show actual names when available; duplicate prerequisites are deduplicated. The source remains public game data. For example, `Pest Control` (quest ID `809605965`) rewards the Araknir Slayer tasks unlock (item `1682820391`), with Slayer level 70 and other prerequisite quests including `Taking Down the Sentinel`. [Brico Pest Control](https://brico.app/database/quest-chain/809605965) · [Brico knowledge](https://brico.app/database/knowledge/225309754). No claim is made about verified accessibility at 1.0 launch.
