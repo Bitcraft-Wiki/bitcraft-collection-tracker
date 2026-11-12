@@ -28,4 +28,6 @@ jobs:
         run: node tests/catalog.test.cjs
       - name: Audit real pinned BitCraft equipment tables across tiers and rarities
         run: node tests/catalog-live.cjs
+      - name: Audit real in-game cosmetic and premium source coverage
+        run: node tests/cosmetic-source-audit.cjs
 
