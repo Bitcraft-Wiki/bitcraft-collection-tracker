@@ -17,6 +17,8 @@
 | **Cooking Power I** (item `255980691`) | Parchemin vendu par **Heimlich**, niveau 10 de Cuisine, 500 Hex Coins / purchased scroll, +2 Cooking Power | [BitCraftToolBox trade table](https://github.com/BitCraftToolBox/BitCraft_GameData/blob/cereal/cs/static/traveler_trade_order_desc.json) · [Brico trade list](https://brico.app/database/traveler-trade) | L’échange est attesté par la table statique ; URL détaillée déduite de son ID, non auditée individuellement / deep-link template not individually verified |
 | **Dried Araknir Blood / Dried Spider Blood** (item `654031403`) | +20 Force permanente ; l’objet apparaît dans **AraknirBloodOrVenomDrop**, catégorie *Dungeon Contribution Item List* / loot list membership | [Item](https://brico.app/database/item/654031403) · [Item Lists](https://brico.app/database/item-list) | **Ne pas transformer la liste de butin en probabilité de drop.** Rencontre et mécanisme précis à confirmer / no verified rate or exact encounter |
 
+| **Unlock Araknir Slayer Tasks / Unlock Araknir Tasks** (item `1682820391`) | Récompense de **Pest Control** : Slayer niveau 70 et six quêtes préalables distinctes, dont **Taking Down the Sentinel**. La quête demande d’interagir avec Ramparte et de détruire le nid d’Araknir. Débloque des tâches de Slayer liées à Araknir / quest reward unlocking Araknir slayer tasks | [Item](https://brico.app/database/item/1682820391) · [Knowledge](https://brico.app/database/knowledge/225309754) · [Quest Pest Control](https://brico.app/database/quest-chain/809605965) | Quêtes préalables identifiées dans les tables publiques. Confirmer l’accès sur le monde 1.0 / check 1.0 availability |
+
 ## Limites et méthode / Method and limits
 
 - Conserver les identifiants d’objets et connaissances du jeu comme clés de suivi, pas les URL Brico.
@@ -28,3 +30,9 @@
 - Historique / Historical event sources : à documenter séparément des méthodes confirmées actuellement actives.
 
 **🇬🇧 Rule:** preserve item and knowledge IDs; never invent acquisition steps or drop rates. In-data evidence is not live-world verification. Distinguish automatic level rewards (excluded) from acquired rewards with level prerequisites (retained).
+
+## Amélioration des prérequis / Prerequisite display
+
+Le tracker traduit désormais les identifiants de quêtes préalables en noms lorsqu’ils sont disponibles dans `quest_chain_desc`; les doublons sont supprimés. Les niveaux requis restent affichés, mais n’entraînent aucune exclusion des objets qui doivent être obtenus séparément.
+
+Quest requirements are displayed with human-readable quest names whenever available, deduplicating repeated prerequisite references; a profession level used as a prerequisite does not make a quest reward an automatic level unlock.
