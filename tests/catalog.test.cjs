@@ -303,3 +303,25 @@ assert(degraded.some(r=>r.key==='I:41190003'),'Jewelry remains visible when auxi
 assert(html.includes('if(eq||tool){if(!accessory)continue;}else{if(isConventionalGearFallback(i))continue;'),'Must gate gear even when no crafting recipe data is available');
 assert(!html.includes('if(eq&&crafted'), 'Old whitelist-by-absence of crafting must be eliminated');
 console.log('PASS: strict equipment whitelist, 90 ordinary gear/rarity examples excluded, 10 crafted or noncrafted special accessories preserved and degraded data covered');
+
+
+// Conventional material armor can also surface as collectible deeds, not just equipment.
+const clothingFixture={
+ ...data,
+ item_desc:[
+  ...data.item_desc,
+  {id:57100001,name:'Aurumite Plated Pants',tag:'Cosmetic Clothes'},
+  {id:57100002,name:'Celestium Chestplate',tag:'Metal Armor'},
+  {id:57100003,name:'Awakened Wolf Boots',tag:'Cosmetic Clothes'}
+ ],
+ collectible_desc:[
+  {id:57110001,name:'Aurumite Plated Pants (Mythic)',collectible_type:'Clothes',item_deed_id:57100001,locked:true},
+  {id:57110002,name:'Special Outfit',collectible_type:'Clothes',item_deed_id:57100002,locked:true},
+  {id:57110003,name:'Awakened Wolf Boots',collectible_type:'Clothes',item_deed_id:57100003,locked:true}
+ ]
+};
+const apparel=makeCatalog(clothingFixture).records;
+assert(!apparel.some(r=>r.key==='C:57110001'),'Normal material armor/cosmetic variant excluded across rarity labels');
+assert(!apparel.some(r=>r.key==='C:57110002'),'Generic collectible deed linked to conventional chestplate excluded');
+assert(apparel.some(r=>r.key==='C:57110003'),'Special event cosmetic must remain accessible');
+console.log('PASS: ordinary material armor collectible deeds excluded without losing special cosmetic collections');
