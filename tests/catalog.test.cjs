@@ -12,10 +12,10 @@ new vm.Script(script);
 const bootAt = script.indexOf(" $('tbody').addEventListener('change'");
 assert.ok(bootAt > 0, 'App startup boundary should be located');
 const isolated = script.slice(0, bootAt) +
-  "\n globalThis.__catalogTest={makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,hasProof,isAstraliteObjectName,isExcludedAstraliteRecord};\n})();";
+  "\n globalThis.__catalogTest={makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,isSpecialEquipment,isConventionalGearFallback,hasProof,isAstraliteObjectName,isExcludedAstraliteRecord};\n})();";
 const context = {console};
 vm.runInNewContext(isolated, context, {timeout: 3000});
-const {makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,hasProof,isAstraliteObjectName,isExcludedAstraliteRecord} = context.__catalogTest;
+const {makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,isSpecialEquipment,isConventionalGearFallback,hasProof,isAstraliteObjectName,isExcludedAstraliteRecord} = context.__catalogTest;
 
 const fishing = officialKnowledgeHint({title:'Tier 3 Trophy Fishing Knowledge'});
 const rarity = officialKnowledgeHint({title:'Tier 7 One That Got Away Knowledge'});
@@ -210,15 +210,118 @@ const screenshotData={
 };
 const screenshotCatalog=makeCatalog(screenshotData).records;
 for(const id of screenshotIds)assert(!screenshotCatalog.some(row=>row.key==='I:'+id),'Astralite screenshot item '+id+' must never enter the catalogue');
-assert(screenshotCatalog.some(row=>row.key==='I:2026121'),'Non-Astralite Axe should not be filtered');
-assert(screenshotCatalog.some(row=>row.key==='I:2026122'),'Non-Astralite Bow should not be filtered');
+assert(!screenshotCatalog.some(row=>row.key==='I:2026121'),'Ordinary Birch Axe must now be excluded even if not Astralite');
+assert(!screenshotCatalog.some(row=>row.key==='I:2026122'),'Ordinary Wooden Bow must now be excluded even if not Astralite');
 assert(isExcludedAstraliteRecord({kind:'item',name:'Astralite Axe'}));
 assert(isExcludedAstraliteRecord({kind:'collectible',name:'Astralite Bow'}));
 assert(!isExcludedAstraliteRecord({kind:'knowledge',name:'Astralite Construction Knowledge'}));
 assert(!isExcludedAstraliteRecord({kind:'item',name:'Birch Axe',description:'Astralite is nearby'}));
 assert(html.includes("id=\"buildInfo\""),'Build marker must let the user distinguish old cache from new app');
-assert(html.includes('UI v2026.11.12-r5'),'Build version should match reviewed release');
+assert(html.includes('UI v2026.11.12-r6'),'Build version should match reviewed release');
 assert(html.includes('return {records:result.filter(row=>!isExcludedAstraliteRecord(row))'),'Final catalogue filter must be applied');
 assert(html.includes('const a=records.filter(x=>{if(isExcludedAstraliteRecord(x))return false;'),'Search and CSV views must independently filter Astralite');
 assert(html.includes('function activeItems(){return records.filter(x=>!isExcludedAstraliteRecord(x)'),'Counters must ignore Astralite');
 console.log('PASS: 8 exact Astralite Axe/Bow screenshot IDs blocked, non-Astralite controls preserved, build stamp and display guards');
+
+
+// Strict equipment whitelist: ordinary craftable armor, tools and weapons NEVER belong in this tracker.
+// Importantly, no crafting recipes are present for these synthetic rarity variants.
+// The exclusions must hold across ALL six official rarities and across material tiers.
+const rarities=['Common','Uncommon','Rare','Epic','Legendary','Mythic'];
+const conventionalSamples=[
+ ['Ferralith Axe','Tool',1],
+ ['Pyrelite Pickaxe','Tool',2],
+ ['Emarium Saw','Tool',3],
+ ['Elenvar Quill','Tool',4],
+ ['Luminite Knife','Tool',5],
+ ['Rathium Shield','Weapon',6],
+ ['Aurumite Mace','Weapon',7],
+ ['Celestium Bow','Weapon',8],
+ ['Celestium Chestplate','Metal Armor',8],
+ ['Umbracite Leather Boots','Leather Armor',9],
+ ['Astralite Duelist Helm','Metal Armor',10],
+ ['Aurumite Plated Pants','Metal Armor',7],
+ ['Perfected Celestium Axe','Tool',8],
+ ['Legendary Rathium Sword','Weapon',6],
+ ['Silver Plated Armor','Metal Armor',6]
+];
+const ordinaryGear=[];
+for(let i=0;i<conventionalSamples.length;i++)for(let rarityIndex=0;rarityIndex<rarities.length;rarityIndex++){
+ const [name,tag,tier]=conventionalSamples[i];
+ ordinaryGear.push({id:41000000+i*10+rarityIndex,name,tag,tier,rarity:rarities[rarityIndex]});
+}
+const specialGear=[
+ {id:5100001,name:'Auric Ring',tag:'Jewelry',rarity:'Epic',slot:'Jewelry'},
+ {id:5100002,name:'Silver Ring',tag:'Jewelry',rarity:'Common',slot:'Jewelry'},
+ {id:5100003,name:'Argic Coralith Ring',tag:'Jewelry',rarity:'Rare',slot:'Jewelry'},
+ {id:5100004,name:'Old Bobber',tag:'Fishing Instrument',rarity:'Common',slot:'FishingInstrument'},
+ {id:5100005,name:'Lucky Gem Charm',tag:'Mining Charm',rarity:'Epic',slot:'MiningCharm'},
+ {id:5100006,name:'Perfect Obsidian',tag:'Trinket',rarity:'Common',slot:'Trinket'},
+ {id:5100007,name:'Ancient Survival Kit (V)',tag:'Trinket',rarity:'Mythic',slot:'Trinket'},
+ {id:5100008,name:'Survivalist Energy Crystal',tag:'Accessory',rarity:'Legendary',slot:'Jewelry'},
+ {id:5100009,name:'Oyster Pearl Charm',tag:'Jewelry',rarity:'Legendary',slot:'Jewelry'},
+ {id:5100010,name:'Crystalized Lobster Chitin Hook',tag:'Fishing Instrument',rarity:'Legendary',slot:'FishingInstrument'}
+];
+const buildItem=({id,name,tag,tier=7,rarity})=>({id,name,tag,tier,rarity});
+const fullGearFixture={
+ ...data,
+ item_desc:[...data.item_desc,...ordinaryGear.map(buildItem),...specialGear.map(buildItem)],
+ equipment_desc:[...data.equipment_desc,...ordinaryGear.map(x=>({item_id:x.id,slots:['MainHand'],level_requirement:{skill_id:2,level:50},stats:[]})),
+   ...specialGear.map(x=>({item_id:x.id,slots:[x.slot],level_requirement:{skill_id:2,level:30},stats:[{id:'Strength',value:5,is_pct:false}]}))],
+ weapon_desc:[...data.weapon_desc,...ordinaryGear.filter(x=>x.tag==='Weapon').map(x=>({item_id:x.id}))],
+ tool_desc:[...data.tool_desc,...ordinaryGear.filter(x=>x.tag==='Tool').map(x=>({item_id:x.id,tool_type:1}))],
+ crafting_recipe_desc:[...data.crafting_recipe_desc,
+   ...specialGear.map(x=>({id:6100000+x.id,name:'Craft '+x.name,crafted_item_stacks:[{item_id:x.id,item_type:'Item'}]}))]
+};
+const filteredGear=makeCatalog(fullGearFixture).records;
+for(const item of ordinaryGear) assert(!filteredGear.some(r=>r.key==='I:'+item.id),item.name+' '+item.rarity+' should NEVER appear, recipe or no recipe');
+for(const item of specialGear){
+ const rec=filteredGear.find(r=>r.key==='I:'+item.id);
+ assert(rec,item.name+' should remain as a special piece of equipment');
+ assert.equal(rec.category,'Équipements spéciaux');
+ assert.match(rec.effect,/Force \+5/);
+ assert(rec.sources.some(src=>src.type==='Fabrication'),'Crafted accessories must preserve their crafting path even if an official hint takes display priority');
+}
+assert.equal(ordinaryGear.length,conventionalSamples.length*rarities.length);
+assert(isSpecialEquipment({name:'Auric Ring',tag:'Jewelry'}, {slots:['Jewelry']}));
+assert(isSpecialEquipment({name:'Ancient Survival Kit (V)',tag:'Trinket'}, {slots:['Trinket']}));
+assert(!isSpecialEquipment({name:'Celestium Mace',tag:'Weapon'}, {slots:['MainHand','OffHand']}));
+assert(!isSpecialEquipment({name:'Perfected Aurumite Axe',tag:'Tool'}, {slots:['MainHand']}));
+assert(isConventionalGearFallback({name:'Legendary Celestium Mace',tag:'Quest Item'}),'Material and weapon type should block false "special" entries');
+assert(!isConventionalGearFallback({name:'Silver Ring',tag:'Jewelry'}),'Ring must not be mistaken for a generic material item');
+const noEquipmentDescriptions={
+ ...data,
+ item_desc:[...data.item_desc,
+  {id:41190001,name:'Rare Celestium Mace',tag:'Quest Item',rarity:'Rare',tier:8},
+  {id:41190002,name:'Perfected Aurumite Axe',tag:'Unique',rarity:'Mythic',tier:7},
+  {id:41190003,name:'Argic Silver Ring',tag:'Jewelry',rarity:'Rare',tier:7}]
+};
+const degraded=makeCatalog(noEquipmentDescriptions).records;
+assert(!degraded.some(r=>r.key==='I:41190001'),'Missing equipment table cannot leak a basic quest-marked mace');
+assert(!degraded.some(r=>r.key==='I:41190002'),'Missing equipment table cannot leak a perfected axe marked unique');
+assert(degraded.some(r=>r.key==='I:41190003'),'Jewelry remains visible when auxiliary equipment tables are missing');
+assert(html.includes('if(eq||tool){if(!accessory)continue;}else{if(isConventionalGearFallback(i))continue;'),'Must gate gear even when no crafting recipe data is available');
+assert(!html.includes('if(eq&&crafted'), 'Old whitelist-by-absence of crafting must be eliminated');
+console.log('PASS: strict equipment whitelist, 90 ordinary gear/rarity examples excluded, 10 crafted or noncrafted special accessories preserved and degraded data covered');
+
+
+// Conventional material armor can also surface as collectible deeds, not just equipment.
+const clothingFixture={
+ ...data,
+ item_desc:[
+  ...data.item_desc,
+  {id:57100001,name:'Aurumite Plated Pants',tag:'Cosmetic Clothes'},
+  {id:57100002,name:'Celestium Chestplate',tag:'Metal Armor'},
+  {id:57100003,name:'Awakened Wolf Boots',tag:'Cosmetic Clothes'}
+ ],
+ collectible_desc:[
+  {id:57110001,name:'Aurumite Plated Pants (Mythic)',collectible_type:'Clothes',item_deed_id:57100001,locked:true},
+  {id:57110002,name:'Special Outfit',collectible_type:'Clothes',item_deed_id:57100002,locked:true},
+  {id:57110003,name:'Awakened Wolf Boots',collectible_type:'Clothes',item_deed_id:57100003,locked:true}
+ ]
+};
+const apparel=makeCatalog(clothingFixture).records;
+assert(!apparel.some(r=>r.key==='C:57110001'),'Normal material armor/cosmetic variant excluded across rarity labels');
+assert(!apparel.some(r=>r.key==='C:57110002'),'Generic collectible deed linked to conventional chestplate excluded');
+assert(apparel.some(r=>r.key==='C:57110003'),'Special event cosmetic must remain accessible');
+console.log('PASS: ordinary material armor collectible deeds excluded without losing special cosmetic collections');

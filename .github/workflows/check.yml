@@ -26,4 +26,6 @@ jobs:
           JS
       - name: Catalog logic and evidence regression tests
         run: node tests/catalog.test.cjs
+      - name: Audit real pinned BitCraft equipment tables across tiers and rarities
+        run: node tests/catalog-live.cjs
 
