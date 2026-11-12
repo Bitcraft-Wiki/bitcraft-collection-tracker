@@ -19,8 +19,11 @@ jobs:
           const js=h.match(/<script>([\s\S]*?)<\/script>/)?.[1];
           if(!js)throw Error('Missing app script');
           new vm.Script(js);
-          for(const token of ['id="impact"','id="confidence"','id="focusStat"','function makeCatalog(d)','knowledge_stat_modifier_desc','function hasProof(r)','localStorage','safe(row.method']) {
+          for(const token of ['id="impact"','id="confidence"','id="focusStat"','function makeCatalog(d)','knowledge_stat_modifier_desc','function hasProof(r)','localStorage' ,'routeHtml']) {
             if(!h.includes(token)) throw Error('Missing contract '+token);
           }
           console.log('Static tracker checks passed');
           JS
+      - name: Catalog logic and evidence regression tests
+        run: node tests/catalog.test.cjs
+
