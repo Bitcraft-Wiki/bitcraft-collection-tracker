@@ -212,13 +212,24 @@ main{padding:25px 0 60px}.ribbon{border:1px solid #796c49;background:#2a281e;bor
    }
    for(const r of (craftMap.get(Number(itemId))||[]).slice(0,3)){
      const req=list(r.level_requirements).map(x=>`${skillMap.get(Number(x.skill_id))||'Métier '+x.skill_id} niveau ${x.level}`).join(' · ');
-     add('Fabrication','Recette définie : '+(r.name||r.title||'recette #'+r.id),req,'crafting_recipe_desc','recipe '+r.id);
+     const rawName=String(r.name||r.title||'');
+     const target=itemMap.get(Number(itemId))?.name||'objet #'+itemId;
+     const recipeName=(!rawName||/[{}]/.test(rawName))?target:rawName;
+     add('Fabrication','Fabriquer « '+recipeName+' » (recette #'+r.id+')',req,'crafting_recipe_desc','recipe '+r.id);
    }
    if(collectibleId){
-     for(const a of (achievementRewards.get(Number(collectibleId))||[]).slice(0,5))add('Succès','Récompense du succès : '+a.name,'','achievement_desc','achievement '+a.id);
+     for(const a of (achievementRewards.get(Number(collectibleId))||[]).filter(x=>!x.pureLevel).slice(0,8)){
+       const reqs=list(a.requisites).map(x=>achievementMap.get(Number(typeof x==='number'?x:(x?.id??x?.achievement_id??0)))?.name).filter(Boolean);
+       const skill=a.skill_level&&a.skill_id?(skillMap.get(Number(a.skill_id))||'Métier '+a.skill_id)+' niveau '+a.skill_level:'';
+       const requirements=[a.description,skill?'Niveau : '+skill:'',reqs.length?'Succès préalables : '+[...new Set(reqs)].join(', '):''].filter(Boolean).join(' · ');
+       add('Succès','Obtenir le succès « '+a.name+' »',requirements,'achievement_desc','achievement '+a.id);
+     }
      for(const p of (premiumRewards.get(Number(collectibleId))||[]).slice(0,5))add('Boutique / compte','Pack : '+p.name+(p.enabled?'':' (pack marqué désactivé dans les données)'),'','premium_item_desc','premium '+p.id);
    }
-   if(routes.length)return{method:routes[0].method,requirements:routes[0].requirements,type:routes[0].type,sources:routes,evidenceUrl:routes[0].evidenceUrl};
+   const unique=[...new Map(routes.map(r=>[r.type+'|'+r.reference,r])).values()];
+   const priority={'Récompense de quête':0,'Succès':1,'Échange voyageur':2,'Tâche de voyageur':3,'Fabrication':4,'Boutique / compte':9};
+   unique.sort((a,b)=>(priority[a.type]??6)-(priority[b.type]??6));
+   if(unique.length)return{method:unique[0].method,requirements:unique[0].requirements,type:unique[0].type,sources:unique,evidenceUrl:unique[0].evidenceUrl};
    return{method:'Méthode non retrouvée dans les tables croisées. Consulter la fiche source, puis confirmer dans le jeu.',type:'À vérifier',requirements:'',sources:[]};
  }
  const result=[];
