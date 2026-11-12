@@ -83,4 +83,4 @@ Players can track their progress per 1.0/EA2 world, set targets and priorities, 
 
 ## Development / Développement
 
-Single-file `index.html` site; no npm build or backend. CI checks embedded JS syntax and essential UI contracts. Public game tables are loaded from the `cereal/cs` branch at runtime.
+Single-file `index.html` site; no npm build or backend. CI checks embedded JS syntax, regression tests and **a reproducible audit of real BitCraft equipment data** pinned to revision `725b093e18dab57961c652691f13450db46881f7`. Public game tables are loaded from the `cereal/cs` branch at runtime.
