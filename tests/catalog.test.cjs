@@ -397,7 +397,7 @@ assert.match(jacket.requirements,/Cooking niv\. 2/);
 assert.equal(jacket.sources.filter(x=>x.reference==='quest 100001').length,1,'Stage reward duplication should be removed');
 const saluted=cc(91006);const taskAlt=saluted.sources.find(x=>x.reference==='task 100014');
 assert(taskAlt,'A secondary traveler task must be preserved alongside the primary quest route');
-assert.match(taskAlt.requirements,/10 × Hex Coin/,'Traveler task item quantities must be identified');
+assert.match(taskAlt.requirements,/10 × Coin/,'Traveler task item quantities must be identified from the fixture item table');
 assert.match(taskAlt.requirements,/Cooking niveau 40/,'Traveler task profession gates must be identified');
 const mask=cc(91009);
 assert.match(mask.method,/Explorer of the Forest/);
