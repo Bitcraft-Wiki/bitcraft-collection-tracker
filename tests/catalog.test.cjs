@@ -367,6 +367,7 @@ const cosmeticFixture={
  stage_rewards_desc:[...data.stage_rewards_desc,{id:1000003,chain_desc_id:100001,rewards:[{item_id:81005,quantity:1}]}],
  traveler_trade_order_desc:[...data.traveler_trade_order_desc,
   {id:100004,traveler:'Heimlich',offer_items:[{item_id:81007,quantity:1}],required_items:[{item_id:1,quantity:15}],required_knowledges:[],blocking_knowledges:[],level_requirements:[]}],
+ traveler_task_desc:[{id:100014,description:'Deliver coins to the wandering traveler',required_items:[{item_id:1,quantity:10}],rewarded_items:[{item_id:81006,quantity:1}],level_requirement:{skill_id:13,min_level:40,max_level:100}}],
  crafting_recipe_desc:[...data.crafting_recipe_desc,
   {id:100005,name:'Craft {0}',crafted_item_stacks:[{item_id:81008,item_type:'Item'}],level_requirements:[{skill_id:13,level:5}]}],
  achievement_desc:[
@@ -394,6 +395,10 @@ const jacket=cc(91005);
 assert.equal(jacket.methodType,'Récompense de quête');
 assert.match(jacket.requirements,/Cooking niv\. 2/);
 assert.equal(jacket.sources.filter(x=>x.reference==='quest 100001').length,1,'Stage reward duplication should be removed');
+const saluted=cc(91006);const taskAlt=saluted.sources.find(x=>x.reference==='task 100014');
+assert(taskAlt,'A secondary traveler task must be preserved alongside the primary quest route');
+assert.match(taskAlt.requirements,/10 × Hex Coin/,'Traveler task item quantities must be identified');
+assert.match(taskAlt.requirements,/Cooking niveau 40/,'Traveler task profession gates must be identified');
 const mask=cc(91009);
 assert.match(mask.method,/Explorer of the Forest/);
 assert.match(mask.requirements,/Complete a journey through the forest/);
