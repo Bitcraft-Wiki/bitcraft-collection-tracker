@@ -327,3 +327,98 @@ assert(!apparel.some(r=>r.key==='C:57110001'),'Normal material armor/cosmetic va
 assert(!apparel.some(r=>r.key==='C:57110002'),'Generic collectible deed linked to conventional chestplate excluded');
 assert(apparel.some(r=>r.key==='C:57110003'),'Special event cosmetic with a verified game quest remains accessible');
 console.log('PASS: ordinary material armor collectible deeds excluded without losing special cosmetic collections');
+
+
+// Strict in-game-only collectibles: even disabled premium packs, historical Twitch drops and
+// unknown cosmetic acquisition routes are excluded from ALL catalogue views.
+const newItems=[
+ [81001,'Premium Outfit Deed'],[81002,'Disabled Premium Cape Deed'],[81003,'Awakened Wolf Gloves Deed'],
+ [81004,'Untraced Cape Deed'],[81005,'Deed: First Steps Jacket'],[81006,'Emote Deed: Salute'],
+ [81007,'Deed: Hairstyle - Wavy'],[81008,'Deed: Festival Floor'],[81009,'Deed: Explorer Mask'],
+ [81010,'Deed: Professional Cook Title'],[81011,'Deed: Alpha Jakyl Puppy'],
+ [81012,'Deed: Premium Decoration'],[81013,'Deed: Awakened Wolf Belt']
+];
+const cosmeticFixture={
+ ...data,
+ item_desc:[...data.item_desc,...newItems.map(([id,name])=>({id,name,tag:'Cosmetic Clothes'}))],
+ collectible_desc:[
+ {id:91001,name:'Premium Outfit',collectible_type:'ClothesTorso',item_deed_id:81001},
+ {id:91002,name:'Disabled Premium Cape',collectible_type:'ClothesCape',item_deed_id:81002},
+ {id:91003,name:"Awakened Wolf's Gloves",collectible_type:'ClothesArms',item_deed_id:81003},
+ {id:91004,name:'Unknown Collector Cape',collectible_type:'ClothesCape',item_deed_id:81004},
+ {id:91005,name:'First Steps Jacket',collectible_type:'ClothesTorso',item_deed_id:81005},
+ {id:91006,name:'Emote Salute',collectible_type:'Emote',item_deed_id:81006},
+ {id:91007,name:'Wavy Hair',collectible_type:'Hair',item_deed_id:81007},
+ {id:91008,name:'Festival Floor',collectible_type:'HousingFloor',item_deed_id:81008},
+ {id:91009,name:'Explorer Mask',collectible_type:'Mask',item_deed_id:81009},
+ {id:91010,name:'Professional Cook',collectible_type:'Title',item_deed_id:81010},
+ {id:91011,name:'Alpha Jakyl Puppy',collectible_type:'Pet',item_deed_id:81011},
+ {id:91012,name:'Premium Decoration',collectible_type:'PremiumItem',item_deed_id:81012},
+ {id:91013,name:"Awakened Wolf's Belt",collectible_type:'ClothesBelt',item_deed_id:81013}
+ ],
+ premium_item_desc:[
+  {id:99001,name:'Premium Pack',collectible_ids:[91001],is_enabled:true},
+  {id:99002,name:'Old Disabled Premium Pack',collectible_ids:[91002],is_enabled:false}
+ ],
+ quest_chain_desc:[...data.quest_chain_desc,
+  {id:100001,name:'Getting Started',requirements:[{Level_:{skill_id:13,level:2}}],rewards:[{ItemStack_:{item_id:81005,quantity:1}},{ItemStack_:{item_id:81006,quantity:1}},{ItemStack_:{item_id:81001,quantity:1}},{ItemStack_:{item_id:81012,quantity:1}},{ItemStack_:{item_id:81013,quantity:1}}],implicit_rewards:[]},
+  {id:100002,name:'Animal Friends',requirements:[],rewards:[{ItemStack_:{item_id:81011,quantity:1}}],implicit_rewards:[]}
+ ],
+ stage_rewards_desc:[...data.stage_rewards_desc,{id:1000003,chain_desc_id:100001,rewards:[{item_id:81005,quantity:1}]}],
+ traveler_trade_order_desc:[...data.traveler_trade_order_desc,
+  {id:100004,traveler:'Heimlich',offer_items:[{item_id:81007,quantity:1}],required_items:[{item_id:1,quantity:15}],required_knowledges:[],blocking_knowledges:[],level_requirements:[]}],
+ crafting_recipe_desc:[...data.crafting_recipe_desc,
+  {id:100005,name:'Craft {0}',crafted_item_stacks:[{item_id:81008,item_type:'Item'}],level_requirements:[{skill_id:13,level:5}]}],
+ achievement_desc:[
+  {id:100006,name:'Explorer of the Forest',description:'Complete a journey through the forest',collectible_rewards:[91009],requisites:[],skill_id:0,skill_level:0},
+  {id:100007,name:'Professional Cook',description:'Achieve level 60 in Cooking',collectible_rewards:[91010],requisites:[],skill_id:13,skill_level:60}
+ ],
+ skill_desc:[...data.skill_desc,{id:13,name:'Cooking'}]
+};
+const cosmeticRecords=makeCatalog(cosmeticFixture).records;
+const cc=id=>cosmeticRecords.find(x=>x.key==='C:'+id);
+for(const id of [91001,91002,91003,91004,91010,91012,91013]){
+ assert(!cc(id),'Disallowed premium/Twitch/untraced/auto-level collectible '+id+' must never appear');
+}
+for(const id of [91005,91006,91007,91008,91009,91011]){
+ const x=cc(id);
+ assert(x,'Verified in-game collectible should remain '+id);
+ assert.equal(x.inGameEvidence,true,'Stored in-game evidence flag required '+id);
+ assert(isInGameAcquisition(x),'Valid playable-game route required');
+}
+assert(!cosmeticRecords.some(r=>r.key==='I:81001'),'Premium deed cannot leak as standalone cosmetic item');
+assert(!cosmeticRecords.some(r=>r.key==='I:81002'),'Disabled premium deed cannot leak');
+const jacket=cc(91005);
+assert.equal(jacket.methodType,'Récompense de quête');
+assert.match(jacket.requirements,/Cooking niv\. 2/);
+assert.equal(jacket.sources.filter(x=>x.reference==='quest 100001').length,1,'Stage reward duplication should be removed');
+const mask=cc(91009);
+assert.match(mask.method,/Explorer of the Forest/);
+assert.match(mask.requirements,/Complete a journey through the forest/);
+const hair=cc(91007);
+assert.equal(hair.methodType,'Échange voyageur');
+assert.match(hair.method,/Heimlich/);
+const floor=cc(91008);
+assert.equal(floor.methodType,'Fabrication');
+assert.match(floor.method,/Deed: Festival Floor/);
+assert(!/\{0\}/.test(floor.method),'Unexpanded craft placeholder should not remain');
+assert(cc(91011).gameplay,'Action-gated pet should remain as functional gameplay content');
+
+const partialCosmeticData={...cosmeticFixture};
+delete partialCosmeticData.premium_item_desc;
+const partialRecords=makeCatalog(partialCosmeticData).records;
+assert(!partialRecords.some(x=>x.kind==='collectible'),'If shop table fails, fail closed for cosmetics');
+assert(partialRecords.some(x=>x.key==='K:50001'),'Missing premium table must not block gameplay knowledge');
+
+assert(isExternalRewardRecord({kind:'other',methodType:'Twitch Drops',name:'Reward'}));
+assert(isExternalRewardRecord({kind:'other',method:'Boutique / compte',name:'Old purchase'}));
+assert(isExternalRewardRecord({kind:'other',key:'OFF:wolf-boots',name:'Whatever'}));
+assert(isAutomaticCareerAchievement({skill_level:60,description:'Achieve level 60 in Cooking'}));
+assert(!isAutomaticCareerAchievement({skill_level:0,description:'Complete a journey through the forest'}));
+assert(!isInScopeRecord({kind:'collectible',name:'Unknown Cosmetic',inGameEvidence:false}));
+assert(isInScopeRecord(cc(91005)));
+assert(!html.includes("key:'OFF:wolf-boots'"),'Hard-coded Twitch reward seeds must be gone');
+assert(!html.includes('id="hideCraft"'),'No obsolete hide crafted clothes toggle');
+assert(html.includes('option value="acquisition"'),'In-game acquisition sorting available');
+assert(html.includes("UI v2026.11.12-r7"),'New visible build stamp');
+console.log('PASS: 13 cosmetic acquisition cases, premium enabled/disabled, Twitch, no in-game source, career-only achievements, mixed sources, and fail-closed imports');
