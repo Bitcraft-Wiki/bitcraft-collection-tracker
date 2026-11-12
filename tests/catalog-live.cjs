@@ -36,6 +36,10 @@ async function fetchJson(name){
  assert(equipRows.length>10,'The real data must retain useful special accessories');
  const material=/\b(?:ferralith|pyrelite|emarium|elenvar|luminite|rathium|aurumite|celestium|umbracite|astralite)\b/i;
  const standard=/\b(?:axe|mace|bow|sword|claymore|dagger|knife|machete|pickaxe|hatchet|helmet|helm|chestplate|gauntlets|greaves|plated pants|shield|quill|saw|chisel|scissors)\b/i;
+ const allItemRows=result.filter(r=>r.kind==='item');
+ const conventionalType=/(?:^|[^a-z])(?:axe|mace|bow|sword|claymore|dagger|knife|machete|pickaxe|hatchet|helmet|helm|chestplate|gauntlets|greaves|plated pants|shield|quill|saw|chisel|scissors|armguards|gloves|boots|leggings|pants|vest|tunic|robe|coat)(?:$|[^a-z])/i;
+ const catalogMaterialLeaks=allItemRows.filter(r=>material.test(r.name)&&conventionalType.test(r.name));
+ assert.equal(catalogMaterialLeaks.length,0,'Conventional material gear leaked in ANY item tab: '+catalogMaterialLeaks.slice(0,20).map(x=>x.name+' ('+x.category+')').join(', '));
  const leaks=equipRows.filter(r=>{
    const item=itemsById.get(Number(r.key.slice(2)));
    if(!item)return false;
