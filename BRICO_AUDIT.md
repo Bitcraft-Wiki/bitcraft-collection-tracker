@@ -36,3 +36,8 @@
 Le tracker traduit désormais les identifiants de quêtes préalables en noms lorsqu’ils sont disponibles dans `quest_chain_desc`; les doublons sont supprimés. Les niveaux requis restent affichés, mais n’entraînent aucune exclusion des objets qui doivent être obtenus séparément.
 
 Quest requirements are displayed with human-readable quest names whenever available, deduplicating repeated prerequisite references; a profession level used as a prerequisite does not make a quest reward an automatic level unlock.
+
+
+## Cosmetic route audit — November 12, 2026 / Cosmétiques obtenables en jeu — 12 novembre 2026
+
+Le catalogue exclut maintenant les entrées issues du premium ou de Twitch, et **les cosmétiques sans source d'obtention en jeu retrouvée**. Les méthodes présentes dans les tables `achievement_desc` sont reliées aux titres de succès, les quêtes en double sont dédupliquées, et les tâches de voyageur affichent ce qu'il faut livrer. Les références Brico et BitCraftToolBox restent disponibles pour chaque voie. Voir [l'audit détaillé / detailed policy](IN_GAME_REWARDS_AUDIT.md).
