@@ -9,7 +9,7 @@ assert.ok(script, 'App script should be embedded');
 new vm.Script(script);
 
 // Exercise actual production functions without starting browser event handlers.
-const bootAt = script.lastIndexOf(" settings=memGet(CACHE+':settings',{});");
+const bootAt = script.indexOf(" $('tbody').addEventListener('change'");
 assert.ok(bootAt > 0, 'App startup boundary should be located');
 const isolated = script.slice(0, bootAt) +
   "\n globalThis.__catalogTest={makeCatalog,officialKnowledgeHint,specialGearHint,isCraftedGameplayAccessory,hasProof};\n})();";
