@@ -135,7 +135,7 @@ const astraliteFixtures={
  item_desc:[
   ...data.item_desc,
   {id:303001,name:'Astralite Duelist Helm',tag:'Metal Armor',rarity:'Mythic'},
-  {id:303002,name:'Astralite Pendant',tag:'Jewelry',rarity:'Epic'},
+  {id:303002,name:'Astralite Pendant',tag:'Trinket',rarity:'Epic'},
   {id:303003,name:'Sunstone Charm',tag:'Charm',description:'A stone found near Astralite'},
   {id:303004,name:'Astralite Memento',tag:'Quest Item'},
   {id:303005,name:'Forest Owl',tag:'Pet'}
@@ -179,13 +179,13 @@ const questFixture={
    implicit_rewards:[]}
  ]
 };
-const araknir=makeCatalog(questFixture).records.find(x=>x.key==='K:1682820391');
-assert(araknir,'Araknir Slayer unlock retained');
-assert.equal(araknir.methodType,'Récompense de quête');
-assert.match(araknir.method,/Pest Control/);
-assert.match(araknir.requirements,/Taking Down the Sentinel/);
-assert.equal((araknir.requirements.match(/Taking Down the Sentinel/g)||[]).length,1,'Repeated prerequisites are deduplicated');
-assert.match(araknir.requirements,/Slayer niv\. 70/);
-assert(araknir.sources.some(x=>x.bricoUrl==='https://brico.app/database/quest-chain/809605965'));
-assert.match(araknir.guidance,/destruction du nid/);
+const araknirSlayer=makeCatalog(questFixture).records.find(x=>x.key==='K:1682820391');
+assert(araknirSlayer,'Araknir Slayer unlock retained');
+assert.equal(araknirSlayer.methodType,'Récompense de quête');
+assert.match(araknirSlayer.method,/Pest Control/);
+assert.match(araknirSlayer.requirements,/Taking Down the Sentinel/);
+assert.equal((araknirSlayer.requirements.match(/Taking Down the Sentinel/g)||[]).length,1,'Repeated prerequisites are deduplicated');
+assert.match(araknirSlayer.requirements,/Slayer niv\. 70/);
+assert(araknirSlayer.sources.some(x=>x.bricoUrl==='https://brico.app/database/quest-chain/809605965'));
+assert.match(araknirSlayer.guidance,/destruction du nid/);
 console.log('PASS: readable prerequisite quest names, deduplication and Araknir quest guide');
