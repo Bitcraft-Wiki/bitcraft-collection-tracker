@@ -20,7 +20,9 @@ Chaque fiche indique, si les données existent : **effet**, **méthode d’obten
 - Filtres de catégorie, impact, rareté, obtention, statut et preuve ; recherche et tri par impact.
 - Progression personnelle par monde **1.0 / EA2** : manquant, cible, obtenu, lié au compte, ignorer.
 - Notes personnelles, export CSV, sauvegarde et import JSON. Stockage local dans le navigateur.
-- Exclusion par défaut des **outils principaux, armes et armures fabriqués**, des connaissances de départ et des données de test.
+- **Exclusion systématique des outils, armes et armures conventionnels**, tous matériaux, tiers et raretés (Common → Mythic), même lorsque la recette n’est pas retrouvée dans les tables.
+- **Équipements conservés : uniquement les accessoires spéciaux**, notamment les anneaux (auric, argent et autres), bijoux, charmes, instruments de pêche, hameçons, bobbers, cristaux d’énergie et trinkets. La fabrication d’un accessoire ne le fait pas disparaître.
+- Les éléments cosmétiques traditionnels restent dans leur propre onglet lorsque ce ne sont pas de simples variantes d’armure. Les connaissances de départ et les données de test restent masquées par défaut.
 - **Objets en Astralite exclus du catalogue** : noms d’objets et objets de collection dont l’acte associé est en Astralite. Les connaissances qui parlent de ce matériau restent visibles, tout comme les objets indépendants qui le mentionnent seulement dans leur description.
 - Interface en français / anglais ; les intitulés du jeu et certaines notes d’obtention restent actuellement dans la langue source ou en français.
 
@@ -36,7 +38,7 @@ Dans le dépôt : **Settings → Pages → Deploy from a branch → main → / (
 
 La progression n’est **pas envoyée sur un serveur** et aucun identifiant BitCraft n’est demandé. Exporter une sauvegarde JSON pour changer d’ordinateur.
 
-**Dépannage : ancienne version en cache.** Après la fusion d'une PR, GitHub Pages peut être en cours de déploiement ou le navigateur peut encore afficher l'ancien HTML. Si des éléments exclus comme **Astralite Axe** ou **Astralite Bow** restent visibles, faire **Ctrl + Maj + R** (Firefox/Windows) ou ouvrir une URL avec un paramètre de version unique, par exemple `https://bitcraft-wiki.github.io/bitcraft-collection-tracker/?v=2026-11-12-r5`. Un indicateur `UI v2026.11.12-r5` dans le bandeau permet de confirmer la nouvelle version après fusion de la PR correspondante. Le bouton « Actualiser les données » actualise les tables et ne recharge pas le code de l'application.
+**Dépannage : ancienne version en cache.** Après la fusion d'une PR, GitHub Pages peut être en cours de déploiement ou le navigateur peut encore afficher l'ancien HTML. Si des éléments exclus comme **Astralite Axe** ou **Astralite Bow** restent visibles, faire **Ctrl + Maj + R** (Firefox/Windows) ou ouvrir une URL avec un paramètre de version unique, par exemple `https://bitcraft-wiki.github.io/bitcraft-collection-tracker/?v=2026-11-12-r5`. Un indicateur `UI v2026.11.12-r6` dans le bandeau permet de confirmer la nouvelle version après fusion de la PR correspondante. Le bouton « Actualiser les données » actualise les tables et ne recharge pas le code de l'application.
 
 Le filtre Astralite s’applique également lors de la construction, de la recherche et du calcul des compteurs. Les anciennes coches restent conservées.
 
@@ -50,11 +52,11 @@ For each unlock the app provides a known effect, any **traced acquisition source
 
 **Astralite-named objects are excluded** across the catalog, including collectibles with Astralite-named deeds. Knowledge about Astralite and unrelated items mentioning it only in a description remain visible. Existing user progress keys are not deleted.
 
-Players can track their progress per 1.0/EA2 world, set targets and priorities, attach local notes and export CSV/JSON. Ordinary craftable main profession tools, weapons and armor are excluded by default. Cosmetic collectibles remain searchable in a separate view.
+Players can track their progress per 1.0/EA2 world, set targets and priorities, attach local notes and export CSV/JSON. **All ordinary tools, weapons and armor are strictly excluded** across materials, tiers and rarities — whether or not their crafting recipes appear in the public tables. Only special equipment such as rings, jewelry, charms, trinkets, fishing instruments, hooks and energy crystals is admitted. Crafted accessories remain. Cosmetics are separate, and conventional material armor deed variants are excluded.
 
 **Important:** a record in the static tables is not proof the unlock can be acquired in the 1.0 launch world. A traced path is not live availability confirmation. The interface is bilingual, but detailed acquisition strings are not yet fully translated.
 
-**Stale-page troubleshooting:** After merging, GitHub Pages deployment and browser HTML caches can lag. If Astralite Axe/Bow items still appear, use Ctrl+Shift+R or a versioned query URL (`?v=2026-11-12-r5`). The `UI v2026.11.12-r5` label in the status ribbon confirms the updated HTML after this PR is merged. Refresh Game Data only refetches the public game tables; it does not reload the website application. Existing local checkmarks are preserved.
+**Stale-page troubleshooting:** After merging, GitHub Pages deployment and browser HTML caches can lag. If Astralite Axe/Bow items still appear, use Ctrl+Shift+R or a versioned query URL (`?v=2026-11-12-r6`). The `UI v2026.11.12-r6` label in the status ribbon confirms the updated HTML after this PR is merged. Refresh Game Data only refetches the public game tables; it does not reload the website application. Existing local checkmarks are preserved.
 
 ## Sources / Sources
 
@@ -71,6 +73,7 @@ Players can track their progress per 1.0/EA2 world, set targets and priorities, 
 - [x] Remove automatic profession-level unlocks from the entire catalogue; keep level-gated acquired knowledge
 - [x] Add Brico.app deep links and a first reviewed acquisition-source sample
 - [x] Exclude Astralite-made objects without hiding unrelated unlocks or deleting saved progress
+- [x] Strict special-equipment whitelist: remove conventional tools/weapons/armor in every rarity, retain silver/auric rings, fishing instruments and charms
 - [x] Resolve prerequisite quest names in acquisition guides; add Araknir's Slayer quest
 - [ ] Verify in-world acquisition conditions and availability after the 1.0 release
 - [ ] Complete FR/EN parity of all detailed item descriptions and methods
