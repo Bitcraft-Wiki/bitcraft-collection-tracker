@@ -38,4 +38,31 @@ async function fetchJson(n){
  console.log('TWITCH NAME MATCHES',JSON.stringify(C.filter(x=>/awakened wolf|twitch|stream|drop/i.test(x.name)).slice(0,30).map(x=>({id:x.id,name:x.name,premium:premiumIds.has(x.id)}))));
  const itemC=C.filter(c=>questItems.has(c.item_deed_id)&&!premiumIds.has(c.id)).slice(0,14);
  console.log('QUEST-GRANTED NONPREMIUM',JSON.stringify(itemC.map(x=>({id:x.id,name:x.name,deed:x.item_deed_id}))));
+
+ const h=fs.readFileSync('index.html','utf8');
+ const src=h.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+ const stop=src.indexOf(" $('tbody').addEventListener('change'");
+ if(!src||stop<0)throw Error('Cannot isolate production catalog');
+ const sandbox={console};vm.runInNewContext(src.slice(0,stop)+"\n globalThis.__auditCatalog=makeCatalog;\n})();",sandbox,{timeout:10000});
+ const catalog=sandbox.__auditCatalog(d).records;
+ const cos=catalog.filter(x=>x.kind==='collectible');
+ const leakedPremium=cos.filter(c=>premiumIds.has(Number(c.key.slice(2))));
+ if(leakedPremium.length)throw Error('Premium collectible leak: '+JSON.stringify(leakedPremium.slice(0,6)));
+ const unknown=cos.filter(x=>!x.inGameEvidence||!(x.sources||[]).some(z=>['Récompense de quête','Échange voyageur','Tâche de voyageur','Fabrication','Succès'].includes(z.type)));
+ if(unknown.length)throw Error('Unverified collectible leak: '+JSON.stringify(unknown.slice(0,6)));
+ const cids=new Set(cos.map(x=>Number(x.key.slice(2))));
+ const mustKeep=[304,315153795,861825712,300545610,174699389]; // quest mask, quest emote, quest pet, trader hair color, quest cape
+ const mustRemove=[4221595,671996935,2916289,16000000]; // premium outfit, Twitch boots, PremiumItem, automatic profession title
+ for(const id of mustKeep)if(!cids.has(id))throw Error('Expected game-sourced collectible missing: '+id+' '+C.find(x=>x.id===id)?.name);
+ for(const id of mustRemove)if(cids.has(id))throw Error('Disallowed cosmetic included: '+id+' '+C.find(x=>x.id===id)?.name);
+ const typeCounts={};const methodCounts={};for(const c of cos){
+   const t=C.find(z=>z.id===Number(c.key.slice(2)))?.collectible_type||'UNKNOWN';
+   typeCounts[t]=(typeCounts[t]||0)+1;
+   methodCounts[c.methodType]=(methodCounts[c.methodType]||0)+1;
+ }
+ console.log('PASS: real in-game cosmetics retained',cos.length,'premium removed',C.filter(x=>premiumIds.has(x.id)).length,'Twitch/unknown excluded');
+ console.log('FINAL IN-GAME COSMETICS BY TYPE',JSON.stringify(typeCounts));
+ console.log('FINAL IN-GAME COSMETICS BY ACQUISITION',JSON.stringify(methodCounts));
+ console.log('CONFIRMED SAMPLE',JSON.stringify(mustKeep.map(id=>{const x=cos.find(c=>c.key==='C:'+id);return {name:x.name,method:x.method,requirements:x.requirements}})));
+
 })().catch(e=>{console.error(e);process.exitCode=1});
