@@ -280,7 +280,7 @@ for(const item of specialGear){
  assert(rec,item.name+' should remain as a special piece of equipment');
  assert.equal(rec.category,'Équipements spéciaux');
  assert.match(rec.effect,/Force \+5/);
- assert.equal(rec.methodType,'Fabrication','Crafted accessories should remain even if craft table has a matching recipe');
+ assert(rec.sources.some(src=>src.type==='Fabrication'),'Crafted accessories must preserve their crafting path even if an official hint takes display priority');
 }
 assert.equal(ordinaryGear.length,conventionalSamples.length*rarities.length);
 assert(isSpecialEquipment({name:'Auric Ring',tag:'Jewelry'}, {slots:['Jewelry']}));
