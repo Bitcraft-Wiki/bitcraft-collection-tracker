@@ -85,3 +85,15 @@ Prerequisite quest IDs are resolved against `quest_chain_desc` to show actual na
 **EN.** Conventional profession tools, weapons and armor are excluded at **every material, tier and rarity** — including variants without an explicit crafting recipe. Their mere presence in `equipment_desc` is not proof of a special unlock. Instead, the catalog uses a **positive whitelist** of specialty accessory item tags, equipment slots and names (jewelry, rings, trinkets, charms, fishing instruments, hooks, bobbers, amulets, energy crystals). Crafted accessories stay in scope. Conventional material-armor collectible deeds are omitted; event-only cosmetics remain. Old local progress records are not deleted.
 
 **Static reference:** [BitCraftToolBox item and equipment descriptors](https://github.com/BitCraftToolBox/BitCraft_GameData/tree/cereal/cs/static) and [Brico example: Lucky Gem Charm](https://brico.app/database/item/878531133), [Brico example: Old Bobber](https://brico.app/database/item/9000005).
+
+
+### Validation sur les tables réelles / Real-data validation
+
+**Snapshot public audité :** `BitCraftToolBox/BitCraft_GameData`, commit `725b093e18dab57961c652691f13450db46881f7`, tables `item_desc`, `equipment_desc`, `tool_desc`, `weapon_desc`. Le contrôle d'intégration sur GitHub Actions charge les **vraies tables**, en plus des tests synthétiques.
+
+- 8 642 objets analysés / items inspected ; 2 238 descriptions d'équipements / equipment records ; 595 outils et 331 armes / tool and weapon descriptors.
+- **630 équipements conventionnels de matières de tier**, couvrant les six raretés officielles / 630 conventional material-tier gear entries covering all six official rarity classes.
+- **0 équipement conventionnel de ces catégories conservé dans la liste**, ainsi que 0 fuite d'équipement standard détectée dans les autres catégories `I:` selon les motifs de matériaux/tags contrôlés / zero audited conventional gear leaks in the full item catalog.
+- **315 accessoires spéciaux conservés** : notamment Old Bobber, Lucky Gem Charm, Oyster Pearl Charm et Perfect Obsidian / 315 specialty accessories retained.
+
+L'audit statique **n'est pas** une preuve d'accessibilité dans le nouveau monde 1.0 ; il ne remplace pas un test navigateur réel ni une vérification exhaustive de tous les objets spéciaux. / The static audit is not confirmation of 1.0 live obtainability or a substitute for browser verification.
