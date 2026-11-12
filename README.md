@@ -7,7 +7,7 @@ Projet communautaire, statique, sans création de compte.
 
 La priorité est de **révéler ce qui améliore vraiment le gameplay**, même lorsque le jeu ne signale pas clairement l’existence d’un bonus : connaissances permanentes, améliorations de statistiques, capacités, recettes utiles, entraînements, équipements spéciaux.
 
-L’accueil affiche en priorité ces déblocages. Les objets cosmétiques et autres collectionnables disposent d’un onglet séparé. Les récompenses **accordées automatiquement par les niveaux de métier sont exclues** de tous les onglets, de la recherche et des exports. Un niveau requis pour acheter un parchemin ou accomplir une quête ne supprime pas ce déblocage de la liste.
+L’accueil affiche en priorité ces déblocages. Les **cosmétiques et collections obtenus par une action en jeu documentée** disposent d’un onglet séparé. Les récompenses de boutique premium, les Twitch Drops, les titres de compte et les collections sans voie d’obtention attestée par les données ne sont plus proposés comme objectifs. Les récompenses **accordées automatiquement par les niveaux de métier sont exclues** de tous les onglets, de la recherche et des exports. Un niveau requis pour acheter un parchemin ou accomplir une quête ne supprime pas ce déblocage de la liste.
 
 Chaque fiche indique, si les données existent : **effet**, **méthode d’obtention**, **prérequis**, **source** et **niveau de preuve**. Les méthodes non retrouvées sont clairement marquées *« À documenter »* : l’outil ne doit rien inventer.
 
@@ -17,12 +17,12 @@ Chaque fiche indique, si les données existent : **effet**, **méthode d’obten
 - Croisement automatisé avec quêtes, récompenses de tâches, échanges de voyageurs et fabrication, **avec toutes les voies repérées et leurs références de table**.
 - Liens directs vers **Brico.app** pour les fiches d’objets (origine), fiches de connaissances (effets), quêtes, échanges et tâches. Un premier lot d’indices d’obtention a été examiné manuellement.
 - Guides officiels d'obtention pour les connaissances de pêche exceptionnelles et certains accessoires spécialisés, et signalement des **anciennes sources événementielles** sans preuve d'accessibilité actuelle.
-- Filtres de catégorie, impact, rareté, obtention, statut et preuve ; recherche et tri par impact.
+- Filtres de catégorie, impact, rareté, obtention, statut et preuve ; **tri par avantage gameplay ou par action d’obtention**. Les avantages documentés passent avant les entrées non renseignées à impact égal.
 - Progression personnelle par monde **1.0 / EA2** : manquant, cible, obtenu, lié au compte, ignorer.
 - Notes personnelles, export CSV, sauvegarde et import JSON. Stockage local dans le navigateur.
 - **Exclusion systématique des outils, armes et armures conventionnels**, tous matériaux, tiers et raretés (Common → Mythic), même lorsque la recette n’est pas retrouvée dans les tables.
 - **Équipements conservés : uniquement les accessoires spéciaux**, notamment les anneaux (auric, argent et autres), bijoux, charmes, instruments de pêche, hameçons, bobbers, cristaux d’énergie et trinkets. La fabrication d’un accessoire ne le fait pas disparaître.
-- Les éléments cosmétiques traditionnels restent dans leur propre onglet lorsque ce ne sont pas de simples variantes d’armure. Les connaissances de départ et les données de test restent masquées par défaut.
+- **Collections cosmétiques : seulement les récompenses de quête, succès non automatiques, échanges de voyageurs, tâches ou fabrications reliées aux tables**. Les collections premium sont écartées **même si le pack est désactivé** ; les Twitch Drops et les cosmétiques sans provenance documentée ne sont plus affichés. Les actes cosmétiques ne créent plus de doublon avec les collectionnables. Les connaissances de départ et les données de test restent masquées par défaut.
 - **Objets en Astralite exclus du catalogue** : noms d’objets et objets de collection dont l’acte associé est en Astralite. Les connaissances qui parlent de ce matériau restent visibles, tout comme les objets indépendants qui le mentionnent seulement dans leur description.
 - Interface en français / anglais ; les intitulés du jeu et certaines notes d’obtention restent actuellement dans la langue source ou en français.
 
@@ -38,7 +38,7 @@ Dans le dépôt : **Settings → Pages → Deploy from a branch → main → / (
 
 La progression n’est **pas envoyée sur un serveur** et aucun identifiant BitCraft n’est demandé. Exporter une sauvegarde JSON pour changer d’ordinateur.
 
-**Dépannage : ancienne version en cache.** Après la fusion d'une PR, GitHub Pages peut être en cours de déploiement ou le navigateur peut encore afficher l'ancien HTML. Si des éléments exclus comme **Astralite Axe** ou **Astralite Bow** restent visibles, faire **Ctrl + Maj + R** (Firefox/Windows) ou ouvrir une URL avec un paramètre de version unique, par exemple `https://bitcraft-wiki.github.io/bitcraft-collection-tracker/?v=2026-11-12-r5`. Un indicateur `UI v2026.11.12-r6` dans le bandeau permet de confirmer la nouvelle version après fusion de la PR correspondante. Le bouton « Actualiser les données » actualise les tables et ne recharge pas le code de l'application.
+**Dépannage : ancienne version en cache.** Après la fusion d'une PR, GitHub Pages peut être en cours de déploiement ou le navigateur peut encore afficher l'ancien HTML. Si des éléments exclus comme **Astralite Axe** ou **Astralite Bow** restent visibles, faire **Ctrl + Maj + R** (Firefox/Windows) ou ouvrir une URL avec un paramètre de version unique, par exemple `https://bitcraft-wiki.github.io/bitcraft-collection-tracker/?v=2026-11-12-r5`. Un indicateur `UI v2026.11.12-r7` dans le bandeau permet de confirmer la nouvelle version après fusion de la PR correspondante. Le bouton « Actualiser les données » actualise les tables et ne recharge pas le code de l'application.
 
 Le filtre Astralite s’applique également lors de la construction, de la recherche et du calcul des compteurs. Les anciennes coches restent conservées.
 
@@ -46,7 +46,7 @@ Le filtre Astralite s’applique également lors de la construction, de la reche
 
 This is **not only a cosmetic collection checklist**. The main view emphasizes permanent upgrades, statistical benefits, abilities, useful recipes, and unusual gameplay unlocks that players may otherwise miss.
 
-For each unlock the app provides a known effect, any **traced acquisition source** (quests, traders, crafting, tasks), prerequisites, links and an evidence label. Unknown acquisition details are explicitly marked as **not yet documented**, rather than guessed.
+For each unlock the app provides a known effect, any **traced acquisition source** (quests, traders, achievements, crafting, tasks), prerequisites, links and an evidence label. Cosmetic collectibles are **only shown with an identifiable in-game action**: quest, non-automatic achievement, traveler trade/task or crafting. Premium-shop rewards (including disabled packs), Twitch Drops, account-purchase gifts and untraced cosmetics are excluded. This does **not** certify availability in 1.0. Unknown acquisition details are explicitly marked as **not yet documented**, rather than guessed.
 
 **Automatically granted profession-level unlocks are omitted entirely**, while scrolls, quests, purchases and other unlocks that merely require a profession level stay visible. Brico.app deep links connect each supported source to item, knowledge, quest, trade or task details.
 
@@ -56,7 +56,7 @@ Players can track their progress per 1.0/EA2 world, set targets and priorities, 
 
 **Important:** a record in the static tables is not proof the unlock can be acquired in the 1.0 launch world. A traced path is not live availability confirmation. The interface is bilingual, but detailed acquisition strings are not yet fully translated.
 
-**Stale-page troubleshooting:** After merging, GitHub Pages deployment and browser HTML caches can lag. If Astralite Axe/Bow items still appear, use Ctrl+Shift+R or a versioned query URL (`?v=2026-11-12-r6`). The `UI v2026.11.12-r6` label in the status ribbon confirms the updated HTML after this PR is merged. Refresh Game Data only refetches the public game tables; it does not reload the website application. Existing local checkmarks are preserved.
+**Stale-page troubleshooting:** After merging, GitHub Pages deployment and browser HTML caches can lag. If Astralite Axe/Bow items still appear, use Ctrl+Shift+R or a versioned query URL (`?v=2026-11-12-r7`). The `UI v2026.11.12-r7` label in the status ribbon confirms the updated HTML after this PR is merged. Refresh Game Data only refetches the public game tables; it does not reload the website application. Existing local checkmarks are preserved.
 
 ## Sources / Sources
 
@@ -65,6 +65,7 @@ Players can track their progress per 1.0/EA2 world, set targets and priorities, 
 - [Official BitCraft announcements](https://bitcraftonline.com/news)
 - [Evidence policy / Politique de preuves](DATA_POLICY.md)
 - [Brico.app — audit des sources / source audit](BRICO_AUDIT.md)
+- [Cosmétiques en jeu uniquement / In-game cosmetics policy & audit](IN_GAME_REWARDS_AUDIT.md)
 
 ## Roadmap / Suite
 
@@ -75,6 +76,8 @@ Players can track their progress per 1.0/EA2 world, set targets and priorities, 
 - [x] Exclude Astralite-made objects without hiding unrelated unlocks or deleting saved progress
 - [x] Strict special-equipment whitelist: remove conventional tools/weapons/armor in every rarity, retain silver/auric rings, fishing instruments and charms
 - [x] Resolve prerequisite quest names in acquisition guides; add Araknir's Slayer quest
+- [x] Remove premium, Twitch and account-only cosmetics; retain only action-sourced in-game cosmetics, with deduplication
+- [x] Improve acquisition details: nonautomatic achievement requirements, quest precedence, traveler-task delivery quantities, crafting names and action-based sorting
 - [ ] Verify in-world acquisition conditions and availability after the 1.0 release
 - [ ] Complete FR/EN parity of all detailed item descriptions and methods
 - [ ] Audit hidden permanent bonuses, gameplay improvements and noncraftable gear
@@ -83,4 +86,4 @@ Players can track their progress per 1.0/EA2 world, set targets and priorities, 
 
 ## Development / Développement
 
-Single-file `index.html` site; no npm build or backend. CI checks embedded JS syntax, regression tests and **a reproducible audit of real BitCraft equipment data** pinned to revision `725b093e18dab57961c652691f13450db46881f7`. Public game tables are loaded from the `cereal/cs` branch at runtime.
+Single-file `index.html` site; no npm build or backend. CI checks embedded JS syntax, regression tests and **reproducible audits of real BitCraft equipment and cosmetic acquisition data** pinned to revision `725b093e18dab57961c652691f13450db46881f7`. Public game tables are loaded from the `cereal/cs` branch at runtime.
