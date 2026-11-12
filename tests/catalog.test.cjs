@@ -118,7 +118,7 @@ assert.ok(multi.sources.some(s=>s.bricoUrl==='https://brico.app/database/quest-c
 const araknir=lookup('K:654031403');
 assert.equal(araknir.verified,'Community','A Brico loot-list clue is not mislabeled as an official source');
 assert.equal(araknir.methodType,'Liste de butin · Brico');
-assert.match(araknir.method,/non confirmés/,'Unverified drop circumstances remain explicit');
+assert.match(araknir.method,/ne sont pas confirmés/,'Unverified drop circumstances remain explicit');
 assert.match(araknir.effect,/Force \+20/);
 assert.ok(html.includes("const CACHE='bitcraft-tracker-v1.0.2026-11'"),'Existing user progress key must remain unchanged');
 console.log('PASS: automatic level exclusions, nonautomatic purchases, deep Brico sources and evidence qualification');
