@@ -7,7 +7,7 @@ Projet communautaire, statique, sans création de compte.
 
 La priorité est de **révéler ce qui améliore vraiment le gameplay**, même lorsque le jeu ne signale pas clairement l’existence d’un bonus : connaissances permanentes, améliorations de statistiques, capacités, recettes utiles, entraînements, équipements spéciaux.
 
-L’accueil affiche en priorité ces déblocages. Les objets cosmétiques et autres collectionnables disposent d’un onglet séparé. Un onglet supplémentaire regroupe les récompenses **automatiques** des niveaux de métier, pour ne pas masquer les bonus moins évidents.
+L’accueil affiche en priorité ces déblocages. Les objets cosmétiques et autres collectionnables disposent d’un onglet séparé. Les récompenses **accordées automatiquement par les niveaux de métier sont exclues** de tous les onglets, de la recherche et des exports. Un niveau requis pour acheter un parchemin ou accomplir une quête ne supprime pas ce déblocage de la liste.
 
 Chaque fiche indique, si les données existent : **effet**, **méthode d’obtention**, **prérequis**, **source** et **niveau de preuve**. Les méthodes non retrouvées sont clairement marquées *« À documenter »* : l’outil ne doit rien inventer.
 
@@ -15,6 +15,7 @@ Chaque fiche indique, si les données existent : **effet**, **méthode d’obten
 
 - Bonus de statistiques calculés à partir des connaissances et des modificateurs publiés, **ainsi que les valeurs des accessoires tirées de `equipment_desc.stats`** (niveau requis inclus).
 - Croisement automatisé avec quêtes, récompenses de tâches, échanges de voyageurs et fabrication, **avec toutes les voies repérées et leurs références de table**.
+- Liens directs vers **Brico.app** pour les fiches d’objets (origine), fiches de connaissances (effets), quêtes, échanges et tâches. Un premier lot d’indices d’obtention a été examiné manuellement.
 - Guides officiels d'obtention pour les connaissances de pêche exceptionnelles et certains accessoires spécialisés, et signalement des **anciennes sources événementielles** sans preuve d'accessibilité actuelle.
 - Filtres de catégorie, impact, rareté, obtention, statut et preuve ; recherche et tri par impact.
 - Progression personnelle par monde **1.0 / EA2** : manquant, cible, obtenu, lié au compte, ignorer.
@@ -40,6 +41,8 @@ This is **not only a cosmetic collection checklist**. The main view emphasizes p
 
 For each unlock the app provides a known effect, any **traced acquisition source** (quests, traders, crafting, tasks), prerequisites, links and an evidence label. Unknown acquisition details are explicitly marked as **not yet documented**, rather than guessed.
 
+**Automatically granted profession-level unlocks are omitted entirely**, while scrolls, quests, purchases and other unlocks that merely require a profession level stay visible. Brico.app deep links connect each supported source to item, knowledge, quest, trade or task details.
+
 Players can track their progress per 1.0/EA2 world, set targets and priorities, attach local notes and export CSV/JSON. Ordinary craftable main profession tools, weapons and armor are excluded by default. Cosmetic collectibles remain searchable in a separate view.
 
 **Important:** a record in the static tables is not proof the unlock can be acquired in the 1.0 launch world. A traced path is not live availability confirmation. The interface is bilingual, but detailed acquisition strings are not yet fully translated.
@@ -50,12 +53,14 @@ Players can track their progress per 1.0/EA2 world, set targets and priorities, 
 - [Brico's Toolbox](https://brico.app/database)
 - [Official BitCraft announcements](https://bitcraftonline.com/news)
 - [Evidence policy / Politique de preuves](DATA_POLICY.md)
+- [Brico.app — audit des sources / source audit](BRICO_AUDIT.md)
 
 ## Roadmap / Suite
 
 - [x] Gameplay-first cards, filters, stat-modifier links, acquisitions and local tracking
 - [x] Official fishing knowledge unlock guidance; source-linked acquisition alternatives; specialist crafted accessories preserved
-- [x] Separate automatic skill-level progression from hidden unlocks
+- [x] Remove automatic profession-level unlocks from the entire catalogue; keep level-gated acquired knowledge
+- [x] Add Brico.app deep links and a first reviewed acquisition-source sample
 - [ ] Verify in-world acquisition conditions and availability after the 1.0 release
 - [ ] Complete FR/EN parity of all detailed item descriptions and methods
 - [ ] Audit hidden permanent bonuses, gameplay improvements and noncraftable gear

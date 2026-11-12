@@ -77,3 +77,48 @@ assert.equal(multi.sources[1].reference,'quest 11');
 assert.match(byKey('I:901').method,/Sentinel/);
 assert.match(byKey('I:904').method,/filets de pêche/);
 console.log('PASS: official hints, historical uncertainty, gear exclusions, stat effects and route provenance');
+
+
+// Regression: profession-level rewards must not become collection goals.
+const withLevel={
+ ...data,
+ skill_level_knowledge_desc:[{id:24680,skill_id:2,level:20,secondary_knowledge_id:500000}],
+ secondary_knowledge_desc:[...data.secondary_knowledge_desc,{id:500000,name:'ForestryLevel20Stats'},{id:247498648,name:'Cooking Power I'},{id:1965541450,name:'Dried Spider Blood'}],
+ knowledge_scroll_desc:[...data.knowledge_scroll_desc,
+  {item_id:255980691,title:'Cooking Power I',tag:"Cook's Knowledge",secondary_knowledge_id:247498648,known_by_default:false,auto_collect:true},
+  {item_id:654031403,title:'Dried Spider Blood',tag:'Dungeon Knowledge',secondary_knowledge_id:1965541450,known_by_default:false,auto_collect:false}
+ ],
+ knowledge_stat_modifier_desc:[...data.knowledge_stat_modifier_desc,{secondary_knowledge_id:247498648,stats:[{id:'CookingPower',value:2,is_pct:false}]},{secondary_knowledge_id:1965541450,stats:[{id:'Strength',value:20,is_pct:false}]}],
+ item_desc:[...data.item_desc,{id:255980691,name:'Cooking Power Training I',tag:'Skill Training'},{id:654031403,name:'Dried Araknir Blood',tag:'Dungeon Upgrade'}],
+ traveler_trade_order_desc:[...data.traveler_trade_order_desc,
+  {id:164868375,traveler:'Heimlich',offer_items:[{item_id:255980691}],required_items:[{item_id:1,quantity:500}],level_requirements:[{skill_id:13,level:10}],required_knowledges:[],blocking_knowledges:[]}],
+ skill_desc:[...data.skill_desc,{id:13,name:'Cooking'}],
+ ability_unlock_desc:[
+  {id:77,show_in_progression:true,level_requirements:[{skill_id:2,level:20}],required_knowledges:[],required_claim_tech_id:0,ability_data:{Prospecting_:17}},
+  {id:88,show_in_progression:true,level_requirements:[{skill_id:2,level:20}],required_knowledges:[247498648],required_claim_tech_id:0,ability_data:{Prospecting_:18}}
+ ]
+};
+const x=makeCatalog(withLevel);
+const lookup=key=>x.records.find(row=>row.key===key);
+assert.equal(x.meta.automaticSkillLevelsExcluded,1);
+assert.ok(!x.records.some(row=>row.key.startsWith('L:')||row.kind==='level'||row.automatic),'Auto-level entries must not be created');
+assert.equal(lookup('S:500000'),undefined,'Orphan level-only knowledge must not leak into secondary knowledge');
+assert.equal(lookup('A:77'),undefined,'Abilities awarded only by level must be excluded');
+assert.ok(lookup('A:88'),'Knowledge-gated ability is still a real unlock');
+assert.ok(!html.includes("['level',language==="),'Auto-levels tab should be gone');
+
+const cooking=lookup('K:255980691');
+assert.equal(cooking.methodType,'Échange voyageur','A level-restricted *purchased* scroll stays in the catalog');
+assert.match(cooking.method,/Heimlich/);
+assert.equal(cooking.source,'https://brico.app/database/item/255980691','Knowledge item page shows acquisition');
+assert.equal(cooking.bricoKnowledgeUrl,'https://brico.app/database/knowledge/247498648','Separate knowledge page shows stat effect');
+assert.ok(cooking.sources.some(s=>s.bricoUrl==='https://brico.app/database/traveler-trade/164868375'),'Trade uses a Brico detail route');
+assert.ok(multi.sources.some(s=>s.bricoUrl==='https://brico.app/database/quest-chain/11'),'Quest uses a Brico detail route');
+
+const araknir=lookup('K:654031403');
+assert.equal(araknir.verified,'Community','A Brico loot-list clue is not mislabeled as an official source');
+assert.equal(araknir.methodType,'Liste de butin · Brico');
+assert.match(araknir.method,/ne sont pas confirmés/,'Unverified drop circumstances remain explicit');
+assert.match(araknir.effect,/Force \+20/);
+assert.ok(html.includes("const CACHE='bitcraft-tracker-v1.0.2026-11'"),'Existing user progress key must remain unchanged');
+console.log('PASS: automatic level exclusions, nonautomatic purchases, deep Brico sources and evidence qualification');
