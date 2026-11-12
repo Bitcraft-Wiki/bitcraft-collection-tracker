@@ -13,7 +13,7 @@ Chaque fiche indique, si les données existent : **effet**, **méthode d’obten
 
 ### Fonctionnalités
 
-- Bonus de statistiques calculés à partir des connaissances et des modificateurs publiés.
+- Bonus de statistiques calculés à partir des connaissances et des modificateurs publiés, **ainsi que les valeurs des accessoires tirées de `equipment_desc.stats`** (niveau requis inclus).
 - Croisement automatisé avec quêtes, récompenses de tâches, échanges de voyageurs et fabrication, **avec toutes les voies repérées et leurs références de table**.
 - Guides officiels d'obtention pour les connaissances de pêche exceptionnelles et certains accessoires spécialisés, et signalement des **anciennes sources événementielles** sans preuve d'accessibilité actuelle.
 - Filtres de catégorie, impact, rareté, obtention, statut et preuve ; recherche et tri par impact.
